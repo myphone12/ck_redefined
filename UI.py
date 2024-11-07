@@ -86,10 +86,13 @@ class Settings_UI(_UI):
     
     def TextLoading(self):
         self.set_text1 = tk.Label(self.tk, text='选择数据库：')
-        self.set_text1.grid(row=0, column=5)
+        self.set_text1.grid(row=0, column=0)
 
         self.set_text2 = tk.Label(self.tk, text='五星概率：四星概率：五星小保底：五星大保底：四星小保底：四星大保底：')
-        self.set_text2.grid(row=3, column=0)
+        self.set_text2.grid(row=2, column=0)
+
+        self.set_text3 = tk.Label(self.tk, text='五星Up：  四星Up：')
+        self.set_text3.grid(row=4, column=0)
     
 
     
