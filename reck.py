@@ -88,19 +88,20 @@ class Ck:
     
     def ck(self, cishu = 1, ReturnLevel = 0):
         result = []
+        a = []
         if cishu <= 0:
             return None
         for i in range(cishu):
-            a = self.getItemLevel()
-            if a == 0:
+            a.append(self.getItemLevel())
+            if a[i] == 0:
                 result.append(r.choice(self.data['Blue']))
-            if a == 1:
+            if a[i] == 1:
                 result.append(r.choice(self.data['Purple']))
-            if a == 2:
+            if a[i] == 2:
                 result.append(r.choice(self.data['UPpurple']))
-            if a == 3:
+            if a[i] == 3:
                 result.append(r.choice(self.data['Gold']))
-            if a == 4:
+            if a[i] == 4:
                 result.append(r.choice(self.data['UPGold']))
         self.ResultData.append(result)
         if ReturnLevel:
