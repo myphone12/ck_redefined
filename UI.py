@@ -3,14 +3,37 @@ from tkinter import ttk, messagebox as msg
 
 from reck import Ck
 
-class main_UI:
+class _UI:
+
+    def __init__(self):
+        self.tk.iconbitmap('.\\icon.ico')
+        self.tk.resizable(0,0)
+        self.ck = Ck()
+    
+    def MenuLoading(self):
+        pass
+
+    def ButtonLoading(self):
+        pass
+
+    def TextLoading(self):
+        pass
+
+    def PrepareUILoading(self):
+        self.MenuLoading()
+        self.ButtonLoading()
+        self.TextLoading()
+    
+    def Mainloop(self):
+        self.tk.mainloop()
+
+
+class main_UI(_UI):
 
     def __init__(self, set = 'default'):
-        self.ck = Ck(set)
         self.tk = tk.Tk()
-        self.tk.iconbitmap('.\\icon.ico')
+        super().__init__()
         self.tk.title('Wish stimulator')
-        self.tk.resizable(0,0)
 
         self.WishDataVar = tk.StringVar()
     
@@ -22,6 +45,10 @@ class main_UI:
         self.ck.ck(cishu= 10)
         self.WishDataVar.set(str(self.ck))
     
+    def OpenSettings(self):
+        self.SettingsPage = Settings_UI(self.tk)
+        self.SettingsPage.PrepareUILoading()
+    
     def MenuLoading(self):
         self.wish_mainmenu = tk.Menu(self.tk, tearoff=False)
         self.wish_menu1 = tk.Menu(self.wish_mainmenu, tearoff=False)
@@ -29,7 +56,7 @@ class main_UI:
         self.wish_menu1.add_command(label='113', command=self.TenWish)
         self.wish_mainmenu.add_cascade(label='11', menu=self.wish_menu1)
         self.wish_mainmenu.add_command(label='112', command=self.OneWish)
-        self.wish_mainmenu.add_command(label='113', command=self.TenWish)
+        self.wish_mainmenu.add_command(label='Settings', command=self.OpenSettings)
         self.tk.config(menu=self.wish_mainmenu)
     
     def ButtonLoading(self):
@@ -47,8 +74,28 @@ class main_UI:
 
         tk.Scrollbar
 
-    def PrepareUILoading(self):
-        self.MenuLoading()
-        self.ButtonLoading()
-        self.TextLoading()
-        self.tk.mainloop()
+class Settings_UI(_UI):
+
+    def __init__(self, TopLevel = False):
+        if TopLevel:
+            self.tk = tk.Toplevel(TopLevel)
+        else:
+            self.tk = tk.Tk()
+        super().__init__()
+        self.tk.title('Settings')
+    
+    def TextLoading(self):
+        self.set_text1 = tk.Label(self.tk, text='五星概率：')
+        self.set_text1.grid(row=0, column=0)
+        self.set_text2 = tk.Label(self.tk, text='四星概率：')
+        self.set_text2.grid(row=0, column=1)
+        self.set_text3 = tk.Label(self.tk, text='五星小保底：')
+        self.set_text3.grid(row=0, column=2)
+        self.set_text4 = tk.Label(self.tk, text='五星大保底：')
+        self.set_text4.grid(row=0, column=3)
+        self.set_text5 = tk.Label(self.tk, text='四星小保底：')
+        self.set_text5.grid(row=0, column=4)
+        self.set_text6 = tk.Label(self.tk, text='四星大保底：')
+        self.set_text6.grid(row=0, column=5)
+
+    
