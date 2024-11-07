@@ -85,17 +85,11 @@ class Settings_UI(_UI):
         self.tk.title('Settings')
     
     def TextLoading(self):
-        self.set_text1 = tk.Label(self.tk, text='五星概率：')
-        self.set_text1.grid(row=0, column=0)
-        self.set_text2 = tk.Label(self.tk, text='四星概率：')
-        self.set_text2.grid(row=0, column=1)
-        self.set_text3 = tk.Label(self.tk, text='五星小保底：')
-        self.set_text3.grid(row=0, column=2)
-        self.set_text4 = tk.Label(self.tk, text='五星大保底：')
-        self.set_text4.grid(row=0, column=3)
-        self.set_text5 = tk.Label(self.tk, text='四星小保底：')
-        self.set_text5.grid(row=0, column=4)
-        self.set_text6 = tk.Label(self.tk, text='四星大保底：')
-        self.set_text6.grid(row=0, column=5)
+        self.set_text1 = tk.Label(self.tk, text='选择数据库：')
+        self.set_text1.grid(row=0, column=5)
+
+        self.set_text2 = tk.Label(self.tk, text='五星概率：四星概率：五星小保底：五星大保底：四星小保底：四星大保底：')
+        self.set_text2.grid(row=3, column=0)
+    
 
     
