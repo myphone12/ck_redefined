@@ -59,13 +59,13 @@ class Ck:
             return 0
     
     def Baodi(self):
-        if self.dt[4] >= self.GoldDabaodi:
+        if self.dt[4] >= self.GoldDabaodi and self.GoldBaodi:
             return 4
-        elif self.dt[3] >= self.GoldBaodi:
+        elif self.dt[3] >= self.GoldBaodi and self.GoldBaodi:
             return 3
-        elif self.dt[2] >= self.PurpleDabaodi:
+        elif self.dt[2] >= self.PurpleDabaodi and self.PurpleBaodi:
             return 2
-        elif self.dt[1] >= self.PurpleBaodi:
+        elif self.dt[1] >= self.PurpleBaodi and self.PurpleBaodi:
             return 1
         else:
             return 0
