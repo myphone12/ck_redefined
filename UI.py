@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox as msg
+from time import sleep
+import threading
 
 from reck import Ck
 
@@ -36,6 +38,7 @@ class main_UI(_UI):
         self.tk.title('Wish stimulator')
 
         self.WishDataVar = tk.StringVar()
+        self.wish_text2Var = tk.StringVar()
     
     def OneWish(self):
         self.ck.ck()
@@ -49,6 +52,13 @@ class main_UI(_UI):
         self.SettingsPage = Settings_UI(self.tk)
         self.SettingsPage.PrepareUILoading()
     
+    def _TextVar1(self):
+        while True:
+            self.wish_text2Var.set('( ^ _ ^ )')
+            sleep(2)
+            self.wish_text2Var.set('( *^▽^* )')
+            sleep(2)
+
     def MenuLoading(self):
         self.wish_mainmenu = tk.Menu(self.tk, tearoff=False)
         self.wish_menu1 = tk.Menu(self.wish_mainmenu, tearoff=False)
@@ -61,18 +71,21 @@ class main_UI(_UI):
     
     def ButtonLoading(self):
         self.wish_button1 = ttk.Button(self.tk, text='One wish', width=10, command=self.OneWish)
-        self.wish_button1.grid(row=2, column=1, padx=20, pady=10)
+        self.wish_button1.grid(row=1, column=0, padx=20, pady=10)
         self.wish_button2 = ttk.Button(self.tk, text='Ten wish', width=10, command=self.TenWish)
-        self.wish_button2.grid(row=2, column=2, padx=20, pady=10)
+        self.wish_button2.grid(row=1, column=1, padx=20, pady=10)
 
     def TextLoading(self):
         self.wish_text1 = tk.Label(self.tk, width=80, height=10, 
                             textvariable = self.WishDataVar, anchor='s', 
                             font=("Microsoft Yahei UI", 9),fg='orange', 
                             wraplength=500, relief='sunken')
-        self.wish_text1.grid(row=1, column=1, columnspan=2, padx=20, pady=10)
-
-        tk.Scrollbar
+        self.wish_text1.grid(row=0, column=0, columnspan=2, padx=20, pady=10)
+        self.wish_text2 = tk.Label(self.tk, textvariable=self.wish_text2Var, 
+                            font=('Microsoft Yahei UI', 9))
+        self.wish_text2.grid(row=2, column=0, columnspan=2, pady=10)
+        self.wish_text2_threading = threading.Thread(target=self._TextVar1)
+        self.wish_text2_threading.start()
 
 class Settings_UI(_UI):
 
