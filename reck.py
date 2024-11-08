@@ -1,15 +1,9 @@
 import random as r
 import json
 
-class Ck:
+class DataLoading:
 
-    '''
-    This is a class which can get a random result from the
-    database with a confirmed probability,and it could also 
-    set a confirmed result after some gets.
-    '''
-
-    def __init__(self, set='default'):
+    def __init__(self):
         with open('.\\database.json', 'r', encoding='utf-8') as file:
             self.data = json.load(file)
         if not isinstance(set,list):
@@ -27,6 +21,17 @@ class Ck:
         self.PurpleBaodi = self.set[4]
         self.PurpleDabaodi = self.set[5]
         self.ResultData = []
+
+class Ck(DataLoading):
+
+    '''
+    This is a class which can get a random result from the
+    database with a confirmed probability,and it could also 
+    set a confirmed result after some gets.
+    '''
+
+    def __init__(self, set='default'):
+        super().__init__()
     
     def __getitem__(self, num):
         return self.ResultData[num]
