@@ -84,7 +84,7 @@ class main_UI(_UI):
         self.wish_text2 = tk.Label(self.tk, textvariable=self.wish_text2Var, 
                             font=('Microsoft Yahei UI', 9))
         self.wish_text2.grid(row=2, column=0, columnspan=2, pady=10)
-        self.wish_text2_threading = threading.Thread(target=self._TextVar1)
+        self.wish_text2_threading = threading.Thread(target=self._TextVar1, daemon=True)
         self.wish_text2_threading.start()
 
 class Settings_UI(_UI):
