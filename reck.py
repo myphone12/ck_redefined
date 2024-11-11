@@ -3,9 +3,9 @@ import json
 
 class DataLoading:
 
-    def __init__(self):
+    def __init__(self, set = 'default'):
         with open('.\\database.json', 'r', encoding='utf-8') as file:
-            self.data = json.load(file)
+            self.data = json.loads(file)
         if not isinstance(set,list):
             if set in self.data:
                 self.data = self.data[set]
@@ -13,14 +13,6 @@ class DataLoading:
                 self.data = self.data['default']
 
         self.dt=[0,0,0,0,0]
-        self.set = self.data['Data']
-        self.Gold = self.set[0]
-        self.Purple = self.set[1]
-        self.GoldBaodi = self.set[2]
-        self.GoldDabaodi = self.set[3]
-        self.PurpleBaodi = self.set[4]
-        self.PurpleDabaodi = self.set[5]
-        self.ResultData = []
 
 class Ck(DataLoading):
 
