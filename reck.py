@@ -5,7 +5,7 @@ class DataLoading:
 
     def __init__(self, set = 'default'):
         with open('.\\database.json', 'r', encoding='utf-8') as file:
-            self.data = json.loads(file)
+            self.data = json.load(file)
         if not isinstance(set,list):
             if set in self.data:
                 self.data = self.data[set]

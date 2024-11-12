@@ -11,6 +11,8 @@ class _UI:
     def __init__(self):
         self.tk.iconbitmap('.\\icon.ico')
         self.tk.resizable(0,0)
+        self.items = {'Text': [], 'Entry': [], 'Checkbox': [], 'Button': []}
+        self.Varitems = {'TextVar': [], 'EntryVar': [], 'CheckboxVar': [], 'ButtonVar': []}
     
     def MenuLoading(self):
         pass
@@ -23,6 +25,21 @@ class _UI:
 
     def InputLoading(self):
         pass
+
+    def Reload(self):
+        for i in self.items['Text']:
+            i.destroy()
+        for i in self.items['Entry']:
+            i.destroy()
+        for i in self.items['Checkbox']:
+            i.destroy()
+        for i in self.items['Button']:
+            i.destroy()
+        self.items = {'Text': [], 'Entry': [], 'Checkbox': [], 'Button': []}
+        self.Varitems = {'TextVar': [], 'EntryVar': [], 'CheckboxVar': [], 'ButtonVar': []}
+        self.PrepareUILoading()
+        self.tk.update()
+
 
     def PrepareUILoading(self):
         self.MenuLoading()
@@ -103,60 +120,57 @@ class Settings_UI(_UI):
         self.tk.title('Settings')
 
         with open('.\\database.json', 'r', encoding='utf-8') as file:
-            self.data = json.loads(file)
+            self.data = json.load(file)
             self.database = self.data['default']
             self.CurrentData = 'default'
 
-        self.set_text = []
-        self.set_entry = []
-        self.set_checkbox = []
-        self.EntryVar = []
-        self.CheckboxVar = []
+        self.Varitems['EntryVar'] = []
+        self.Varitems['CheckboxVar']= []
     
     def About(self):
         pass
 
     def SaveChange(self):
-        tmp = 0
+        tmp = 0;n = 1
         for i in self.database['data']:
+            n += 1
             for j in self.database['data'][i]:
-                self.data[self.CurrentData]['data'][i][j] = self.EntryVar[tmp].get()
                 tmp += 1
-        with open('.\\database.json', 'w', encoding='utf-8') as file:
-            file.write(json.dumps(self.data))
-        
+                if j == '保底':
+                    if not self.Varitems['CheckboxVar'][int(tmp - n)].get():
+                        self.data[self.CurrentData]['data'][i]['保底'] = '0'
+                        continue
+                if j == '大保底':
+                    if not self.Varitems['CheckboxVar'][int(tmp - n)].get():
+                        self.data[self.CurrentData]['data'][i]['大保底'] = '0'
+                        continue
+                self.data[self.CurrentData]['data'][i][j] = self.Varitems['EntryVar'][tmp - 1].get()
+            
+            
+        with open('.\\database.json', 'w+', encoding='utf-8') as file:
+            file.write(json.dumps(self.data, ensure_ascii=False, indent=4))
 
     def setDB(self,database):
         self.CurrentData = database
         self.database = self.data.get(database)
         self.Reload()
-        
+    
+    def delDB(self, database):
+        pass
 
     def setLanguage(self,language):
         print(language)
     
-    def Reload(self):
-        for i in self.set_text:
-            i.destroy()
-        for i in self.set_entry:
-            i.destroy()
-        for i in self.set_checkbox:
-            i.destroy()
-        self.set_text = []
-        self.set_entry = []
-        self.set_checkbox = []
-        self.CheckboxVar = []
-        self.EntryVar = []
-        self.PrepareUILoading()
-        self.tk.update()
+    def CreateNew(self):
+        pass
 
     def TextLoading(self):
         for i in range(len(self.database['data'])):
-            self.set_text.append(tk.Label(self.tk, text=list(self.database['data'].keys())[i] + '概率:'))
-            self.set_text[i].grid(row=i+2, column=0, padx=5, pady=5)
+            self.items['Text'].append(tk.Label(self.tk, text=list(self.database['data'].keys())[i] + '概率:'))
+            self.items['Text'][i].grid(row=i+2, column=0, padx=5, pady=5)
 
-        # self.set_text3 = tk.Label(self.tk, text='五星Up；  四星Up：')
-        # self.set_text3.grid(row=8, column=0)
+        # self.items['Text']3 = tk.Label(self.tk, text='五星Up；  四星Up：')
+        # self.items['Text']3.grid(row=8, column=0)
     
     def MenuLoading(self):
         self.set_mainmenu = tk.Menu(self.tk, tearoff=False)
@@ -174,33 +188,44 @@ class Settings_UI(_UI):
     def InputLoading(self):
         tmp = 2
         for i in self.database['data']:
-            self.EntryVar.append(tk.StringVar())
-            self.set_entry.append(ttk.Entry(self.tk, textvariable=self.EntryVar[-1], width=8))
-            self.set_entry[-1].grid(row=tmp, column=1, padx=5)
-            self.EntryVar[-1].set(value = str(self.database['data'][i]['概率']))
-            self.EntryVar.append(tk.StringVar())
-            self.set_entry.append(ttk.Entry(self.tk, textvariable=self.EntryVar[-1], width=5))
-            self.set_entry[-1].grid(row=tmp, column=3, padx=5)
-            self.EntryVar[-1].set(value = str(self.database['data'][i]['保底']))
-            self.EntryVar.append(tk.StringVar())
-            self.set_entry.append(ttk.Entry(self.tk, textvariable=self.EntryVar[-1], width=5))
-            self.set_entry[-1].grid(row=tmp, column=5, padx=10)
-            self.EntryVar[-1].set(value = str(self.database['data'][i]['大保底']))
-            self.CheckboxVar.append(tk.IntVar())
-            self.set_checkbox.append(ttk.Checkbutton(self.tk, text='小保底', variable=self.CheckboxVar[-1]))
-            self.set_checkbox[-1].grid(row=tmp, column=2, padx=10)
-            self.CheckboxVar[-1].set(value = bool(self.database['data'][i]['保底']))
-            self.CheckboxVar.append(tk.IntVar())
-            self.set_checkbox.append(ttk.Checkbutton(self.tk, text='大保底', variable=self.CheckboxVar[-1]))
-            self.set_checkbox[-1].grid(row=tmp, column=4, padx=10)
-            self.CheckboxVar[-1].set(value = bool(self.database['data'][i]['大保底']))
+            self.Varitems['EntryVar'].append(tk.StringVar())
+            self.items['Entry'].append(ttk.Entry(self.tk, textvariable=self.Varitems['EntryVar'][-1], width=8))
+            self.items['Entry'][-1].grid(row=tmp, column=1, padx=5)
+            self.Varitems['EntryVar'][-1].set(str(self.database['data'][i]['概率']))
+            self.Varitems['EntryVar'].append(tk.StringVar())
+            self.items['Entry'].append(ttk.Entry(self.tk, textvariable=self.Varitems['EntryVar'][-1], width=5))
+            self.items['Entry'][-1].grid(row=tmp, column=3, padx=5)
+            self.Varitems['EntryVar'][-1].set(str(self.database['data'][i]['保底']))
+            self.Varitems['EntryVar'].append(tk.StringVar())
+            self.items['Entry'].append(ttk.Entry(self.tk, textvariable=self.Varitems['EntryVar'][-1], width=5))
+            self.items['Entry'][-1].grid(row=tmp, column=5, padx=10)
+            self.Varitems['EntryVar'][-1].set(str(self.database['data'][i]['大保底']))
+            self.Varitems['CheckboxVar'].append(tk.IntVar())
+            self.items['Checkbox'].append(ttk.Checkbutton(self.tk, text='小保底', variable=self.Varitems['CheckboxVar'][-1]))
+            self.items['Checkbox'][-1].grid(row=tmp, column=2, padx=10)
+            self.Varitems['CheckboxVar'][-1].set(bool(self.database['data'][i]['保底'] != '0'))
+            self.Varitems['CheckboxVar'].append(tk.IntVar())
+            self.items['Checkbox'].append(ttk.Checkbutton(self.tk, text='大保底', variable=self.Varitems['CheckboxVar'][-1]))
+            self.items['Checkbox'][-1].grid(row=tmp, column=4, padx=10)
+            self.Varitems['CheckboxVar'][-1].set(bool(self.database['data'][i]['大保底'] != '0'))
             tmp += 1
         self.finalcloumn = tmp
         
     def ButtonLoading(self):
-        self.set_button1 = ttk.Button(self.tk, text='修改抽卡物品数据', width=20, command=self.SaveChange)
-        self.set_button1.grid(row=0, column=0, columnspan=3, padx=20, pady=10)
-        self.set_button2 = ttk.Button(self.tk, text='保存', width=20, command=self.SaveChange)
-        self.set_button2.grid(row=0, column=3, columnspan=3, padx=20, pady=10)
-        self.set_button2 = ttk.Button(self.tk, text='新建', width=40, command=self.SaveChange)
-        self.set_button2.grid(row=self.finalcloumn, column=3, columnspan=6, padx=20, pady=10)
+        self.items['Button'].append(ttk.Button(self.tk, text='修改抽卡物品数据', width=20, command=self.SaveChange))
+        self.items['Button'][-1].grid(row=0, column=0, columnspan=4, padx=20, pady=10)
+        self.items['Button'].append(ttk.Button(self.tk, text='保存', width=20, command=self.SaveChange))
+        self.items['Button'][-1].grid(row=0, column=4, columnspan=3, padx=20, pady=10)
+        self.items['Button'].append(ttk.Button(self.tk, text='新建', width=40, command=self.CreateNew))
+        self.items['Button'][-1].grid(row=self.finalcloumn, column=0, columnspan=7, padx=20, pady=10)
+        for i in self.database['data']:
+            self.items['Button'].append(ttk.Button(self.tk, text='删除项', command=lambda data=i:self.delDB(data)))
+            self.items['Button'][-1].grid(row=list(self.database['data'].keys()).index(i) + 2, column=6, padx=10)
+
+class UI_NewDB(_UI):
+
+    def __init__(self):
+        super().__init__()
+    
+    def MenuLoading(self):
+        pass
