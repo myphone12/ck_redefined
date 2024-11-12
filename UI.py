@@ -74,6 +74,9 @@ class main_UI(_UI):
         self.SettingsPage = Settings_UI(self.tk)
         self.SettingsPage.PrepareUILoading()
     
+    def Caidan(self):
+        msg.showinfo('彩蛋','恭喜你发现了彩蛋！！')
+    
     def _TextVar1(self):
         while True:
             self.wish_text2Var.set('( ^ _ ^ )')
@@ -89,6 +92,7 @@ class main_UI(_UI):
         self.wish_mainmenu.add_cascade(label='11', menu=self.wish_menu1)
         self.wish_mainmenu.add_command(label='112', command=self.OneWish)
         self.wish_mainmenu.add_command(label='Settings', command=self.OpenSettings)
+        self.wish_mainmenu.add_command(label='  ', command=self.Caidan)
         self.tk.config(menu=self.wish_mainmenu)
     
     def ButtonLoading(self):
@@ -158,6 +162,9 @@ class Settings_UI(_UI):
     def delDB(self, database):
         pass
 
+    def newDB(self):
+        pass
+
     def setLanguage(self,language):
         print(language)
     
@@ -177,6 +184,8 @@ class Settings_UI(_UI):
         self.set_menu1 = tk.Menu(self.set_mainmenu, tearoff=False)
         for i in self.data.keys():
             self.set_menu1.add_command(label=i, command=lambda data=i:self.setDB(data))
+        self.set_menu1.add_separator()
+        self.set_menu1.add_command(label='新建数据库', command=self.newDB)
         self.set_menu2 = tk.Menu(self.set_mainmenu, tearoff=False)
         self.set_menu2.add_command(label='zh_CN', command=lambda:self.setLanguage('zh_CN'))
         self.set_menu2.add_command(label='en_US', command=lambda:self.setLanguage('en_US'))
@@ -213,10 +222,12 @@ class Settings_UI(_UI):
         
     def ButtonLoading(self):
         self.items['Button'].append(ttk.Button(self.tk, text='修改抽卡物品数据', width=20, command=self.SaveChange))
-        self.items['Button'][-1].grid(row=0, column=0, columnspan=4, padx=20, pady=10)
-        self.items['Button'].append(ttk.Button(self.tk, text='保存', width=20, command=self.SaveChange))
-        self.items['Button'][-1].grid(row=0, column=4, columnspan=3, padx=20, pady=10)
-        self.items['Button'].append(ttk.Button(self.tk, text='新建', width=40, command=self.CreateNew))
+        self.items['Button'][-1].grid(row=0, column=0, columnspan=2, padx=20, pady=10)
+        self.items['Button'].append(ttk.Button(self.tk, text='保存数据', width=20, command=self.SaveChange))
+        self.items['Button'][-1].grid(row=0, column=2, columnspan=3, padx=20, pady=10)
+        self.items['Button'].append(ttk.Button(self.tk, text='删除此数据库', width=20, command=self.SaveChange))
+        self.items['Button'][-1].grid(row=0, column=5, columnspan=2, padx=20, pady=10)
+        self.items['Button'].append(ttk.Button(self.tk, text='新建项', width=40, command=self.CreateNew))
         self.items['Button'][-1].grid(row=self.finalcloumn, column=0, columnspan=7, padx=20, pady=10)
         for i in self.database['data']:
             self.items['Button'].append(ttk.Button(self.tk, text='删除项', command=lambda data=i:self.delDB(data)))
