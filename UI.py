@@ -1,16 +1,26 @@
 import tkinter as tk
 from tkinter import ttk, messagebox as msg
 from time import sleep
-import threading, json
-
+from PIL import Image, ImageTk
+import threading, json, winsound, random, cv2, webbrowser,sys
 from reck import Ck
-from copy import copy
 
 class _UI:
 
-    def __init__(self):
+    def __init__(self, TopLevel = False):
+        if TopLevel:
+            self.tk = tk.Toplevel(TopLevel)
+        else:
+            self.tk = tk.Tk()
         self.tk.iconbitmap('.\\icon.ico')
         self.tk.resizable(0,0)
+        screenwidth = self.tk.winfo_screenwidth()
+        screenheight = self.tk.winfo_screenheight()
+        self.tk.update()
+        width = self.tk.winfo_width()
+        height = self.tk.winfo_height()
+        size = '+%d+%d' % ((screenwidth - width)/2, (screenheight - height)/2)
+        self.tk.geometry(size)
         self.items = {'Text': [], 'Entry': [], 'Checkbox': [], 'Button': []}
         self.Varitems = {'TextVar': [], 'EntryVar': [], 'CheckboxVar': [], 'ButtonVar': []}
     
@@ -26,7 +36,7 @@ class _UI:
     def InputLoading(self):
         pass
 
-    def Reload(self):
+    def Destroy(self):
         for i in self.items['Text']:
             i.destroy()
         for i in self.items['Entry']:
@@ -37,6 +47,9 @@ class _UI:
             i.destroy()
         self.items = {'Text': [], 'Entry': [], 'Checkbox': [], 'Button': []}
         self.Varitems = {'TextVar': [], 'EntryVar': [], 'CheckboxVar': [], 'ButtonVar': []}
+    
+    def Reload(self):
+        self.Destroy()
         self.PrepareUILoading()
         self.tk.update()
 
@@ -53,14 +66,13 @@ class _UI:
 
 class main_UI(_UI):
 
-    def __init__(self, set = 'default'):
-        self.tk = tk.Tk()
-        self.ck = Ck()
-        super().__init__()
+    def __init__(self, TopLevel = False):
+        super().__init__(TopLevel)
         self.tk.title('Wish stimulator')
 
         self.WishDataVar = tk.StringVar()
         self.wish_text2Var = tk.StringVar()
+        self.caidan = 0
     
     def OneWish(self):
         self.ck.ck()
@@ -75,13 +87,44 @@ class main_UI(_UI):
         self.SettingsPage.PrepareUILoading()
     
     def Caidan(self):
-        msg.showinfo('彩蛋','恭喜你发现了彩蛋！！')
+        if not self.caidan:
+            msg.showinfo('彩蛋','恭喜你发现了彩蛋( *^▽^* )')
+            self.caidan = 1
+            match random.choice([1]):
+                case 0:
+                    self.wish_text2 = tk.Label(self.tk, textvariable=self.wish_text2Var, 
+                                    font=('Microsoft Yahei UI', 9))
+                    self.wish_text2.grid(row=2, column=0, columnspan=2, pady=10)
+                    self.wish_text2_threading = threading.Thread(target=self._TextVar1, daemon=True)
+                    self.wish_text2_threading.start()
+                    self.tk.update()
+                case 1:
+                    self.video = Player(self.tk, '.\\src\\sddl.mp4', '说的道理')
+                    self.wish_text2_threading = threading.Thread(target=self._video1, daemon=True)
+                    self.wish_text2_threading.start()
+                    self.video.PrepareUILoading()
+                case 2:
+                    webbrowser.open('https://www.bilibili.com/video/BV1GJ411x7h7/')
     
+    def _video1(self):
+        while True:
+            print(self.video.finish)
+            if self.video.finish == 1:
+                image = Player(self.tk, '.\\src\\wow.mp4', '袜袄！！！' , '+0+0')
+                image.PrepareUILoading()
+                break
+
     def _TextVar1(self):
         while True:
             self.wish_text2Var.set('( ^ _ ^ )')
             sleep(2)
             self.wish_text2Var.set('( *^▽^* )')
+            sleep(2)
+            self.wish_text2Var.set('ヾ(✿ﾟ▽ﾟ)ノ')
+            sleep(2)
+            self.wish_text2Var.set('(ﾉ≧∀≦)ﾉ')
+            sleep(2)
+            self.wish_text2Var.set('(oﾟ▽ﾟ)o  ')
             sleep(2)
 
     def MenuLoading(self):
@@ -107,29 +150,17 @@ class main_UI(_UI):
                             font=("Microsoft Yahei UI", 9),fg='orange', 
                             wraplength=500, relief='sunken')
         self.wish_text1.grid(row=0, column=0, columnspan=2, padx=20, pady=10)
-        self.wish_text2 = tk.Label(self.tk, textvariable=self.wish_text2Var, 
-                            font=('Microsoft Yahei UI', 9))
-        self.wish_text2.grid(row=2, column=0, columnspan=2, pady=10)
-        self.wish_text2_threading = threading.Thread(target=self._TextVar1, daemon=True)
-        self.wish_text2_threading.start()
-
+    
 class Settings_UI(_UI):
 
     def __init__(self, TopLevel = False):
-        if TopLevel:
-            self.tk = tk.Toplevel(TopLevel)
-        else:
-            self.tk = tk.Tk()
-        super().__init__()
+        super().__init__(TopLevel)
         self.tk.title('Settings')
 
         with open('.\\database.json', 'r', encoding='utf-8') as file:
             self.data = json.load(file)
             self.database = self.data['default']
             self.CurrentData = 'default'
-
-        self.Varitems['EntryVar'] = []
-        self.Varitems['CheckboxVar']= []
     
     def About(self):
         pass
@@ -163,13 +194,38 @@ class Settings_UI(_UI):
         pass
 
     def newDB(self):
-        pass
+        self.CreateNewWindow = CreateNewWindow(self.tk, '新建数据库')
+        self.CreateNewWindow.PrepareUILoading()
 
     def setLanguage(self,language):
         print(language)
     
     def CreateNew(self):
+        self.CreateNewWindow = CreateNewWindow(self.tk, '新建项')
+        self.CreateNewWindow.PrepareUILoading()
+
+    def Del(self, data):
         pass
+
+    def Rename(self, data):
+        self.CreateNewWindow = CreateNewWindow(self.tk, '重命名',data)
+        self.CreateNewWindow.PrepareUILoading()
+        self.rename_thread = threading.Thread(target=lambda:self._Rename(data))
+        self.rename_thread.start()
+        
+    def _Rename(self, data):
+        tmp = {}
+        for i in self.data[self.CurrentData]['data']:
+            if i == data:
+                   tmp[self.CreateNewWindow.ReturnData] = self.data[self.CurrentData]['data'][i]
+            else:
+                tmp[i] = self.data[self.CurrentData]['data'][i]
+        del self.data[self.CurrentData]['data']
+        self.data[self.CurrentData]['data'] = tmp
+        del self.database['data']
+        self.database['data'] = tmp
+
+
 
     def TextLoading(self):
         for i in range(len(self.database['data'])):
@@ -222,21 +278,96 @@ class Settings_UI(_UI):
         
     def ButtonLoading(self):
         self.items['Button'].append(ttk.Button(self.tk, text='修改抽卡物品数据', width=20, command=self.SaveChange))
-        self.items['Button'][-1].grid(row=0, column=0, columnspan=2, padx=20, pady=10)
+        self.items['Button'][-1].grid(row=0, column=0, columnspan=3, padx=20, pady=10)
         self.items['Button'].append(ttk.Button(self.tk, text='保存数据', width=20, command=self.SaveChange))
-        self.items['Button'][-1].grid(row=0, column=2, columnspan=3, padx=20, pady=10)
+        self.items['Button'][-1].grid(row=0, column=3, columnspan=3, padx=20, pady=10)
         self.items['Button'].append(ttk.Button(self.tk, text='删除此数据库', width=20, command=self.SaveChange))
-        self.items['Button'][-1].grid(row=0, column=5, columnspan=2, padx=20, pady=10)
+        self.items['Button'][-1].grid(row=0, column=6, columnspan=2, padx=20, pady=10)
         self.items['Button'].append(ttk.Button(self.tk, text='新建项', width=40, command=self.CreateNew))
-        self.items['Button'][-1].grid(row=self.finalcloumn, column=0, columnspan=7, padx=20, pady=10)
+        self.items['Button'][-1].grid(row=self.finalcloumn, column=0, columnspan=8, padx=20, pady=10)
         for i in self.database['data']:
-            self.items['Button'].append(ttk.Button(self.tk, text='删除项', command=lambda data=i:self.delDB(data)))
+            self.items['Button'].append(ttk.Button(self.tk, text='重命名', command=lambda data=i:self.Rename(data)))
             self.items['Button'][-1].grid(row=list(self.database['data'].keys()).index(i) + 2, column=6, padx=10)
+            self.items['Button'].append(ttk.Button(self.tk, text='删除项', command=lambda data=i:self.Del(data)))
+            self.items['Button'][-1].grid(row=list(self.database['data'].keys()).index(i) + 2, column=7, padx=10)
 
-class UI_NewDB(_UI):
+class CreateNewWindow(_UI):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, TopLevel = False, title = '新建', varset = ''):
+        super().__init__(TopLevel)
+        self.tk.title(title)
+        self.varset = varset
+        self.ReturnData = ''
     
-    def MenuLoading(self):
-        pass
+    def Save(self):
+        self.ReturnData = self.Varitems['TextVar'][-1].get()
+        self.tk.destroy()
+
+    def TextLoading(self):
+        self.items['Text'].append(ttk.Label(self.tk, text='设置名称：'))
+        self.items['Text'][-1].grid(row=0, column=0,columnspan=2)
+        self.Varitems['TextVar'].append(tk.StringVar())
+        self.items['Text'].append(ttk.Entry(self.tk, textvariable=self.Varitems['TextVar'][-1], width=20))
+        self.items['Text'][-1].grid(row=1, column=0,columnspan=2, padx=10, pady=10)
+        self.Varitems['TextVar'][-1].set(self.varset)
+    
+    def ButtonLoading(self):
+        self.items['Button'].append(ttk.Button(self.tk, text='保存', width=20, command=self.Save))
+        self.items['Button'][-1].grid(row=2, column=1, padx=20, pady=10)
+        self.items['Button'].append(ttk.Button(self.tk, text='取消', width=20, command=self.tk.destroy))
+        self.items['Button'][-1].grid(row=2, column=0, padx=20, pady=10)
+
+class Player(_UI):
+
+    def __init__(self, TopLevel=False, playitem = '', title = '', pos = 0):
+        super().__init__(TopLevel)
+        self.tk.title(title)
+        self.playitem = playitem
+        self.tk.protocol("WM_DELETE_WINDOW", self.on_closing)
+        if pos:
+            self.tk.geometry(pos)
+        self.finish = 0
+
+    def on_closing(self):
+        self.tk.destroy()
+        self.finish = 1
+        sys.exit()
+
+    def play_video(self):
+        self.cap = cv2.VideoCapture(self.playitem)
+    
+    def play_image(self):
+        self.img = cv2.imread(self.playitem)
+        tmp = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
+        img = Image.fromarray(tmp)
+        imgtk = ImageTk.PhotoImage(image=img)
+        self.label.imgtk = imgtk
+        self.label.configure(image=imgtk)
+        self.tk.update()
+
+    def update_frame(self):
+        ret, frame = self.cap.read()
+        if ret:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  
+            img = Image.fromarray(frame)
+            imgtk = ImageTk.PhotoImage(image=img)
+            self.label.imgtk = imgtk  
+            self.label.configure(image=imgtk)
+            self.label.after(5, self.update_frame)
+        else:
+            self.cap.release()
+            self.finish = 1
+            self.tk.destroy()
+    
+    def TextLoading(self):
+        self.label = ttk.Label(self.tk)
+        self.label.grid(padx=10, pady=10)
+        if self.playitem[-3:-1] == 'jp':
+            self.play_image()
+            winsound.PlaySound(self.playitem[0:-3] + 'wav',winsound.SND_ASYNC or winsound.SND_FILENAME)
+        elif self.playitem[-3:-1] == 'mp':
+            self.play_video()
+            winsound.PlaySound(self.playitem[0:-3] + 'wav',winsound.SND_ASYNC or winsound.SND_FILENAME)
+            self.update_frame()
+        
+        
