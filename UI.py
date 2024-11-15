@@ -90,7 +90,7 @@ class main_UI(_UI):
         if not self.caidan:
             msg.showinfo('彩蛋','恭喜你发现了彩蛋( *^▽^* )')
             self.caidan = 1
-            match random.choice([1]):
+            match random.choice([0,1,2]):
                 case 0:
                     self.wish_text2 = tk.Label(self.tk, textvariable=self.wish_text2Var, 
                                     font=('Microsoft Yahei UI', 9))
