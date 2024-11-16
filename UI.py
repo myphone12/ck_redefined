@@ -190,8 +190,12 @@ class Settings_UI(_UI):
         self.database = self.data.get(database)
         self.Reload()
     
-    def delDB(self, database):
-        pass
+    def delDB(self):
+        n = msg.askokcancel(title='你确定吗？', message='你确定要继续删除该数据库吗？')
+
+    def ChangeItemData(self):
+        self.ChangeItemDataWindow = ItemDataSettings_UI(TopLevel= self.tk, data=self.CurrentData)
+        self.ChangeItemDataWindow.PrepareUILoading()
 
     def newDB(self):
         self.CreateNewWindow = CreateNewWindow(self.tk, '新建数据库')
@@ -314,11 +318,11 @@ class Settings_UI(_UI):
         self.finalcloumn = tmp
         
     def ButtonLoading(self):
-        self.items['Button'].append(ttk.Button(self.tk, text='修改抽卡物品数据', width=20, command=self.SaveChange))
+        self.items['Button'].append(ttk.Button(self.tk, text='修改抽卡物品数据', width=20, command=self.ChangeItemData))
         self.items['Button'][-1].grid(row=0, column=0, columnspan=3, padx=20, pady=10)
         self.items['Button'].append(ttk.Button(self.tk, text='保存数据', width=20, command=self.SaveChange))
         self.items['Button'][-1].grid(row=0, column=3, columnspan=3, padx=20, pady=10)
-        self.items['Button'].append(ttk.Button(self.tk, text='删除此数据库', width=20, command=self.SaveChange))
+        self.items['Button'].append(ttk.Button(self.tk, text='删除此数据库', width=20, command=self.delDB))
         self.items['Button'][-1].grid(row=0, column=6, columnspan=2, padx=20, pady=10)
         self.items['Button'].append(ttk.Button(self.tk, text='新建项', width=40, command=self.CreateNew))
         self.items['Button'][-1].grid(row=self.finalcloumn, column=0, columnspan=8, padx=20, pady=10)
