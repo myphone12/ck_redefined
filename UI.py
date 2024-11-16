@@ -202,31 +202,68 @@ class Settings_UI(_UI):
     
     def CreateNew(self):
         self.CreateNewWindow = CreateNewWindow(self.tk, '新建项')
+        self.rename_thread = threading.Thread(target=lambda:self._CreateNew())
+        self.rename_thread.start()
         self.CreateNewWindow.PrepareUILoading()
 
     def Del(self, data):
-        pass
+        n = msg.askokcancel(title='你确定吗？', message='你确定要继续删除该项吗？')
+        if n and len(self.data[self.CurrentData]['data']) > 1:
+            tmp = {}
+            for i in self.data[self.CurrentData]['data']:
+                if i == data:
+                       pass
+                else:
+                    tmp[i] = self.data[self.CurrentData]['data'][i]
+            del self.data[self.CurrentData]['data']
+            self.data[self.CurrentData]['data'] = tmp
+            del self.database['data']
+            self.database['data'] = tmp
+            self.Reload()
+            self.SaveChange()
+        elif len(self.data[self.CurrentData]['data']) <= 1:
+            msg.showerror('提示','必须保留至少一项！')
 
     def Rename(self, data):
         self.CreateNewWindow = CreateNewWindow(self.tk, '重命名',data)
-        self.CreateNewWindow.PrepareUILoading()
         self.rename_thread = threading.Thread(target=lambda:self._Rename(data))
         self.rename_thread.start()
+        self.CreateNewWindow.PrepareUILoading()
+        
         
     def _Rename(self, data):
         tmp = {}
-        for i in self.data[self.CurrentData]['data']:
-            if i == data:
-                   tmp[self.CreateNewWindow.ReturnData] = self.data[self.CurrentData]['data'][i]
-            else:
-                tmp[i] = self.data[self.CurrentData]['data'][i]
-        del self.data[self.CurrentData]['data']
-        self.data[self.CurrentData]['data'] = tmp
-        del self.database['data']
-        self.database['data'] = tmp
+        while True:
+            if self.CreateNewWindow.ReturnData != '':
+                for i in self.data[self.CurrentData]['data']:
+                    if i == data:
+                        tmp[self.CreateNewWindow.ReturnData] = self.data[self.CurrentData]['data'][i]
+                    else:
+                        tmp[i] = self.data[self.CurrentData]['data'][i]
+                del self.data[self.CurrentData]['data']
+                self.data[self.CurrentData]['data'] = tmp
+                del self.database['data']
+                self.database['data'] = tmp
+                self.CreateNewWindow.ReturnData = ''
+                self.Reload()
+                self.SaveChange()
+                break
 
-
-
+    def _CreateNew(self):
+        tmp = {}
+        while True:
+            if self.CreateNewWindow.ReturnData != '':
+                for i in self.data[self.CurrentData]['data']:
+                    tmp[i] = self.data[self.CurrentData]['data'][i]
+                tmp[self.CreateNewWindow.ReturnData] = {'概率': '0', '保底': '0', '大保底': 0}
+                del self.data[self.CurrentData]['data']
+                self.data[self.CurrentData]['data'] = tmp
+                del self.database['data']
+                self.database['data'] = tmp
+                self.Reload()
+                self.SaveChange()
+                break
+    
     def TextLoading(self):
         for i in range(len(self.database['data'])):
             self.items['Text'].append(tk.Label(self.tk, text=list(self.database['data'].keys())[i] + '概率:'))
