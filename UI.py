@@ -409,16 +409,36 @@ class Player(_UI):
         
 class ItemDataSettings_UI(_UI):
 
-    def __init__(self, TopLevel=False):
+    def __init__(self, TopLevel=False, data = 'default'):
         super().__init__(TopLevel)
 
         self.tk.title('修改抽卡物品数据')
+        with open('.\\database.json', 'r', encoding='utf-8') as file:
+            self.data = json.load(file)
+            self.database = self.data[data]
+            self.CurrentData = data
     
+    def Save(self):
+        pass
+
     def TextLoading(self):
-        return super().TextLoading()
+        for i in range(len(self.database) - 1):
+            self.items['Text'].append(tk.Label(self.tk, text=list(self.database.keys())[i] + ':'))
+            self.items['Text'][i].grid(row=i, column=0, padx=5, pady=5)
     
     def InputLoading(self):
-        return super().InputLoading()
+        tmp = 0
+        for i in self.database:
+            if i != 'data':
+                self.Varitems['EntryVar'].append(tk.StringVar())
+                self.items['Entry'].append(ttk.Entry(self.tk, textvariable=self.Varitems['EntryVar'][-1], width=80))
+                self.items['Entry'][-1].grid(row=tmp, column=1, padx=10)
+                self.Varitems['EntryVar'][-1].set(str(self.database[i])[1:-1])
+            tmp += 1
+        self.finalcolumn = tmp
     
     def ButtonLoading(self):
-        return super().ButtonLoading()
+        self.items['Button'].append(ttk.Button(self.tk, text='保存', width=80, command=self.Save))
+        self.items['Button'][-1].grid(row=self.finalcolumn + 1, column=0, columnspan=2, padx=20, pady=10)
+        self.items['Button'].append(ttk.Button(self.tk, text='取消', width=80, command=self.tk.destroy))
+        self.items['Button'][-1].grid(row=self.finalcolumn + 2, column=0, columnspan=2, padx=20, pady=10)

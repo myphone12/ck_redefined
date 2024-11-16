@@ -9,7 +9,7 @@
 #     # print(a)
 
 import UI
-a = UI.main_UI()
+a = UI.ItemDataSettings_UI()
 
 
 a.PrepareUILoading()
