@@ -407,4 +407,18 @@ class Player(_UI):
             winsound.PlaySound(self.playitem[0:-3] + 'wav',winsound.SND_ASYNC or winsound.SND_FILENAME)
             self.update_frame()
         
-        
+class ItemDataSettings_UI(_UI):
+
+    def __init__(self, TopLevel=False):
+        super().__init__(TopLevel)
+
+        self.tk.title('修改抽卡物品数据')
+    
+    def TextLoading(self):
+        return super().TextLoading()
+    
+    def InputLoading(self):
+        return super().InputLoading()
+    
+    def ButtonLoading(self):
+        return super().ButtonLoading()
