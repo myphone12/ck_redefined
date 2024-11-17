@@ -10,6 +10,7 @@ class _UI(language.language):
 
     def __init__(self, TopLevel = False):
         super().__init__()
+        self.en_US()
         if TopLevel:
             self.tk = tk.Toplevel(TopLevel)
         else:
@@ -70,12 +71,12 @@ class main_UI(_UI):
 
     def __init__(self, TopLevel = False):
         super().__init__(TopLevel)
-        self.en_US()
+        self.ck = Ck()
         self.tk.title(self.lang.title)
 
         self.WishDataVar = tk.StringVar()
         self.wish_text2Var = tk.StringVar()
-        self.caidan = 0
+        self.easteregg = 0
     
     def OneWish(self):
         self.ck.ck()
@@ -89,10 +90,10 @@ class main_UI(_UI):
         self.SettingsPage = Settings_UI(self.tk)
         self.SettingsPage.PrepareUILoading()
     
-    def Caidan(self):
-        if not self.caidan:
-            msg.showinfo('彩蛋','恭喜你发现了彩蛋( *^▽^* )')
-            self.caidan = 1
+    def EasterEgg(self):
+        if not self.easteregg:
+            msg.showinfo(self.lang.easteregg,self.lang.eastereggmsg)
+            self.easteregg = 1
             match random.choice([0,1,2]):
                 case 0:
                     self.wish_text2 = tk.Label(self.tk, textvariable=self.wish_text2Var, 
@@ -111,7 +112,6 @@ class main_UI(_UI):
     
     def _video1(self):
         while True:
-            print(self.video.finish)
             if self.video.finish == 1:
                 image = Player(self.tk, '.\\src\\wow.mp4', '袜袄！！！' , '+0+0')
                 image.PrepareUILoading()
@@ -137,14 +137,14 @@ class main_UI(_UI):
         self.wish_menu1.add_command(label='113', command=self.TenWish)
         self.wish_mainmenu.add_cascade(label='11', menu=self.wish_menu1)
         self.wish_mainmenu.add_command(label='112', command=self.OneWish)
-        self.wish_mainmenu.add_command(label='Settings', command=self.OpenSettings)
-        self.wish_mainmenu.add_command(label='  ', command=self.Caidan)
+        self.wish_mainmenu.add_command(label=self.lang.settings, command=self.OpenSettings)
+        self.wish_mainmenu.add_command(label='  ', command=self.EasterEgg)
         self.tk.config(menu=self.wish_mainmenu)
     
     def ButtonLoading(self):
-        self.items['Button'].append(ttk.Button(self.tk, text='One wish', width=10, command=self.OneWish))
+        self.items['Button'].append(ttk.Button(self.tk, text=self.lang.onewish, width=10, command=self.OneWish))
         self.items['Button'][-1].grid(row=1, column=0, padx=20, pady=10)
-        self.items['Button'].append(ttk.Button(self.tk, text='Ten wish', width=10, command=self.TenWish))
+        self.items['Button'].append(ttk.Button(self.tk, text=self.lang.tenwish, width=10, command=self.TenWish))
         self.items['Button'][-1].grid(row=1, column=1, padx=20, pady=10)
 
     def TextLoading(self):
@@ -159,7 +159,7 @@ class Settings_UI(_UI):
 
     def __init__(self, TopLevel = False):
         super().__init__(TopLevel)
-        self.tk.title('Settings')
+        self.tk.title(self.lang.settings)
 
         with open('.\\database.json', 'r', encoding='utf-8') as file:
             self.data = json.load(file)
@@ -195,27 +195,27 @@ class Settings_UI(_UI):
         self.Reload()
     
     def delDB(self):
-        n = msg.askokcancel(title='你确定吗？', message='你确定要继续删除该数据库吗？')
+        n = msg.askokcancel(title=self.lang.deletedb, message=self.lang.deletedbmsg)
 
     def ChangeItemData(self):
         self.ChangeItemDataWindow = ItemDataSettings_UI(TopLevel= self.tk, data=self.CurrentData)
         self.ChangeItemDataWindow.PrepareUILoading()
 
     def newDB(self):
-        self.CreateNewWindow = CreateNewWindow(self.tk, '新建数据库')
+        self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.newdb)
         self.CreateNewWindow.PrepareUILoading()
 
     def setLanguage(self,language):
         print(language)
     
     def CreateNew(self):
-        self.CreateNewWindow = CreateNewWindow(self.tk, '新建项')
+        self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.newitem)
         self.rename_thread = threading.Thread(target=lambda:self._CreateNew())
         self.rename_thread.start()
         self.CreateNewWindow.PrepareUILoading()
 
     def Del(self, data):
-        n = msg.askokcancel(title='你确定吗？', message='你确定要继续删除该项吗？')
+        n = msg.askokcancel(title=self.lang.deleteitem, message=self.lang.deleteitemmsg)
         if n and len(self.data[self.CurrentData]['data']) > 1:
             tmp = {}
             for i in self.data[self.CurrentData]['data']:
@@ -233,7 +233,7 @@ class Settings_UI(_UI):
             msg.showerror('提示','必须保留至少一项！')
 
     def Rename(self, data):
-        self.CreateNewWindow = CreateNewWindow(self.tk, '重命名',data)
+        self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.rename,data)
         self.rename_thread = threading.Thread(target=lambda:self._Rename(data))
         self.rename_thread.start()
         self.CreateNewWindow.PrepareUILoading()
@@ -242,7 +242,7 @@ class Settings_UI(_UI):
     def _Rename(self, data):
         tmp = {}
         while True:
-            if self.CreateNewWindow.ReturnData != '':
+            if self.CreateNewWindow.ReturnData != '' and self.CreateNewWindow.ReturnData != '0':
                 for i in self.data[self.CurrentData]['data']:
                     if i == data:
                         tmp[self.CreateNewWindow.ReturnData] = self.data[self.CurrentData]['data'][i]
@@ -256,11 +256,13 @@ class Settings_UI(_UI):
                 self.Reload()
                 self.SaveChange()
                 break
+            if self.CreateNewWindow.ReturnData == '0':
+                break
 
     def _CreateNew(self):
         tmp = {}
         while True:
-            if self.CreateNewWindow.ReturnData != '':
+            if self.CreateNewWindow.ReturnData != '' and self.CreateNewWindow.ReturnData != '0':
                 for i in self.data[self.CurrentData]['data']:
                     tmp[i] = self.data[self.CurrentData]['data'][i]
                 tmp[self.CreateNewWindow.ReturnData] = {'概率': '0', '保底': '0', '大保底': 0}
@@ -270,6 +272,8 @@ class Settings_UI(_UI):
                 self.database['data'] = tmp
                 self.Reload()
                 self.SaveChange()
+                break
+            if self.CreateNewWindow.ReturnData == '0':
                 break
     
     def TextLoading(self):
@@ -286,13 +290,13 @@ class Settings_UI(_UI):
         for i in self.data.keys():
             self.set_menu1.add_command(label=i, command=lambda data=i:self.setDB(data))
         self.set_menu1.add_separator()
-        self.set_menu1.add_command(label='新建数据库', command=self.newDB)
+        self.set_menu1.add_command(label=self.lang.newdb, command=self.newDB)
         self.set_menu2 = tk.Menu(self.set_mainmenu, tearoff=False)
         self.set_menu2.add_command(label='zh_CN', command=lambda:self.setLanguage('zh_CN'))
         self.set_menu2.add_command(label='en_US', command=lambda:self.setLanguage('en_US'))
-        self.set_mainmenu.add_cascade(label='选择数据库', menu=self.set_menu1)
-        self.set_mainmenu.add_cascade(label='设置语言', menu=self.set_menu2)
-        self.set_mainmenu.add_command(label='关于', command=self.About)
+        self.set_mainmenu.add_cascade(label=self.lang.choosedb, menu=self.set_menu1)
+        self.set_mainmenu.add_cascade(label=self.lang.chooselang, menu=self.set_menu2)
+        self.set_mainmenu.add_command(label=self.lang.about, command=self.About)
         self.tk.config(menu=self.set_mainmenu)
 
     def InputLoading(self):
@@ -322,23 +326,23 @@ class Settings_UI(_UI):
         self.finalcloumn = tmp
         
     def ButtonLoading(self):
-        self.items['Button'].append(ttk.Button(self.tk, text='修改抽卡物品数据', width=20, command=self.ChangeItemData))
+        self.items['Button'].append(ttk.Button(self.tk, text=self.lang.setitemdata, width=20, command=self.ChangeItemData))
         self.items['Button'][-1].grid(row=0, column=0, columnspan=3, padx=20, pady=10)
-        self.items['Button'].append(ttk.Button(self.tk, text='保存数据', width=20, command=self.SaveChange))
+        self.items['Button'].append(ttk.Button(self.tk, text=self.lang.save, width=20, command=self.SaveChange))
         self.items['Button'][-1].grid(row=0, column=3, columnspan=3, padx=20, pady=10)
-        self.items['Button'].append(ttk.Button(self.tk, text='删除此数据库', width=20, command=self.delDB))
+        self.items['Button'].append(ttk.Button(self.tk, text=self.lang.deletedb, width=20, command=self.delDB))
         self.items['Button'][-1].grid(row=0, column=6, columnspan=2, padx=20, pady=10)
-        self.items['Button'].append(ttk.Button(self.tk, text='新建项', width=40, command=self.CreateNew))
+        self.items['Button'].append(ttk.Button(self.tk, text=self.lang.newitem, width=40, command=self.CreateNew))
         self.items['Button'][-1].grid(row=self.finalcloumn, column=0, columnspan=8, padx=20, pady=10)
         for i in self.database['data']:
-            self.items['Button'].append(ttk.Button(self.tk, text='重命名', command=lambda data=i:self.Rename(data)))
+            self.items['Button'].append(ttk.Button(self.tk, text=self.lang.rename, command=lambda data=i:self.Rename(data)))
             self.items['Button'][-1].grid(row=list(self.database['data'].keys()).index(i) + 2, column=6, padx=10)
-            self.items['Button'].append(ttk.Button(self.tk, text='删除项', command=lambda data=i:self.Del(data)))
+            self.items['Button'].append(ttk.Button(self.tk, text=self.lang.deleteitem, command=lambda data=i:self.Del(data)))
             self.items['Button'][-1].grid(row=list(self.database['data'].keys()).index(i) + 2, column=7, padx=10)
 
 class CreateNewWindow(_UI):
 
-    def __init__(self, TopLevel = False, title = '新建', varset = ''):
+    def __init__(self, TopLevel = False, title = 'New', varset = ''):
         super().__init__(TopLevel)
         self.tk.title(title)
         self.varset = varset
@@ -347,9 +351,13 @@ class CreateNewWindow(_UI):
     def Save(self):
         self.ReturnData = self.Varitems['TextVar'][-1].get()
         self.tk.destroy()
+    
+    def Cancel(self):
+        self.ReturnData = '0'
+        self.tk.destroy()
 
     def TextLoading(self):
-        self.items['Text'].append(ttk.Label(self.tk, text='设置名称：'))
+        self.items['Text'].append(ttk.Label(self.tk, text=self.lang.setname))
         self.items['Text'][-1].grid(row=0, column=0,columnspan=2)
         self.Varitems['TextVar'].append(tk.StringVar())
         self.items['Text'].append(ttk.Entry(self.tk, textvariable=self.Varitems['TextVar'][-1], width=20))
@@ -357,9 +365,9 @@ class CreateNewWindow(_UI):
         self.Varitems['TextVar'][-1].set(self.varset)
     
     def ButtonLoading(self):
-        self.items['Button'].append(ttk.Button(self.tk, text='保存', width=20, command=self.Save))
+        self.items['Button'].append(ttk.Button(self.tk, text=self.lang.save, width=20, command=self.Save))
         self.items['Button'][-1].grid(row=2, column=1, padx=20, pady=10)
-        self.items['Button'].append(ttk.Button(self.tk, text='取消', width=20, command=self.tk.destroy))
+        self.items['Button'].append(ttk.Button(self.tk, text=self.lang.cancel, width=20, command=self.Cancel))
         self.items['Button'][-1].grid(row=2, column=0, padx=20, pady=10)
 
 class Player(_UI):
@@ -420,7 +428,7 @@ class ItemDataSettings_UI(_UI):
     def __init__(self, TopLevel=False, data = 'default'):
         super().__init__(TopLevel)
 
-        self.tk.title('修改抽卡物品数据')
+        self.tk.title(self.lang.setitemdata)
         with open('.\\database.json', 'r', encoding='utf-8') as file:
             self.data = json.load(file)
             self.database = self.data[data]
@@ -446,7 +454,7 @@ class ItemDataSettings_UI(_UI):
         self.finalcolumn = tmp
     
     def ButtonLoading(self):
-        self.items['Button'].append(ttk.Button(self.tk, text='保存', width=80, command=self.Save))
+        self.items['Button'].append(ttk.Button(self.tk, text=self.lang.save, width=80, command=self.Save))
         self.items['Button'][-1].grid(row=self.finalcolumn + 1, column=0, columnspan=2, padx=20, pady=10)
-        self.items['Button'].append(ttk.Button(self.tk, text='取消', width=80, command=self.tk.destroy))
+        self.items['Button'].append(ttk.Button(self.tk, text=self.lang.cancel, width=80, command=self.tk.destroy))
         self.items['Button'][-1].grid(row=self.finalcolumn + 2, column=0, columnspan=2, padx=20, pady=10)
