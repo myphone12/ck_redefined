@@ -122,7 +122,7 @@ class main_UI(_UI, Loadlanguage):
     
     def _video1(self):
         while True:
-            print(self.video.finish)
+            sleep(1)
             if self.video.finish == 1:
                 image = Player(self.tk, '.\\src\\wow.mp4', self.lang.wow , '+0+0')
                 image.PrepareUILoading()
