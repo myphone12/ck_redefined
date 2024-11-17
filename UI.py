@@ -6,11 +6,21 @@ import threading, json, winsound, random, cv2, webbrowser,sys
 from reck import Ck
 import language
 
+class Loadlanguage(language.language):
+
+    def __init__(self):
+        super().__init__()
+        with open('.\\language', 'r') as l:
+            tmp = l.read()
+            if tmp == 'zh_CN':
+                self.zh_CN()
+            elif tmp == 'en_US':
+                self.en_US()
+
 class _UI(language.language):
 
     def __init__(self, TopLevel = False):
         super().__init__()
-        self.en_US()
         if TopLevel:
             self.tk = tk.Toplevel(TopLevel)
         else:
@@ -67,7 +77,7 @@ class _UI(language.language):
         self.tk.mainloop()
 
 
-class main_UI(_UI):
+class main_UI(_UI, Loadlanguage):
 
     def __init__(self, TopLevel = False):
         super().__init__(TopLevel)
@@ -94,7 +104,7 @@ class main_UI(_UI):
         if not self.easteregg:
             msg.showinfo(self.lang.easteregg,self.lang.eastereggmsg)
             self.easteregg = 1
-            match random.choice([0,1,2]):
+            match random.choice([1]):
                 case 0:
                     self.wish_text2 = tk.Label(self.tk, textvariable=self.wish_text2Var, 
                                     font=('Microsoft Yahei UI', 9))
@@ -103,7 +113,7 @@ class main_UI(_UI):
                     self.wish_text2_threading.start()
                     self.tk.update()
                 case 1:
-                    self.video = Player(self.tk, '.\\src\\sddl.mp4', '说的道理')
+                    self.video = Player(self.tk, '.\\src\\sddl.mp4', self.lang.sddl)
                     self.wish_text2_threading = threading.Thread(target=self._video1, daemon=True)
                     self.wish_text2_threading.start()
                     self.video.PrepareUILoading()
@@ -112,8 +122,9 @@ class main_UI(_UI):
     
     def _video1(self):
         while True:
+            print(self.video.finish)
             if self.video.finish == 1:
-                image = Player(self.tk, '.\\src\\wow.mp4', '袜袄！！！' , '+0+0')
+                image = Player(self.tk, '.\\src\\wow.mp4', self.lang.wow , '+0+0')
                 image.PrepareUILoading()
                 break
 
@@ -155,7 +166,7 @@ class main_UI(_UI):
                             wraplength=500, relief='sunken'))
         self.items['Text'][-1].grid(row=0, column=0, columnspan=2, padx=20, pady=10)
     
-class Settings_UI(_UI):
+class Settings_UI(_UI, Loadlanguage):
 
     def __init__(self, TopLevel = False):
         super().__init__(TopLevel)
@@ -206,8 +217,12 @@ class Settings_UI(_UI):
         self.CreateNewWindow.PrepareUILoading()
 
     def setLanguage(self,language):
-        print(language)
-    
+        n = msg.askokcancel(self.lang.chooselang, self.lang.chooselangmsg)
+        if n:
+            with open('.\\language', 'w') as l:
+                l.write(language)
+            sys.exit()
+
     def CreateNew(self):
         self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.newitem)
         self.rename_thread = threading.Thread(target=lambda:self._CreateNew())
@@ -340,7 +355,7 @@ class Settings_UI(_UI):
             self.items['Button'].append(ttk.Button(self.tk, text=self.lang.deleteitem, command=lambda data=i:self.Del(data)))
             self.items['Button'][-1].grid(row=list(self.database['data'].keys()).index(i) + 2, column=7, padx=10)
 
-class CreateNewWindow(_UI):
+class CreateNewWindow(_UI, Loadlanguage):
 
     def __init__(self, TopLevel = False, title = 'New', varset = ''):
         super().__init__(TopLevel)
@@ -423,7 +438,7 @@ class Player(_UI):
             winsound.PlaySound(self.playitem[0:-3] + 'wav',winsound.SND_ASYNC or winsound.SND_FILENAME)
             self.update_frame()
         
-class ItemDataSettings_UI(_UI):
+class ItemDataSettings_UI(_UI, Loadlanguage):
 
     def __init__(self, TopLevel=False, data = 'default'):
         super().__init__(TopLevel)

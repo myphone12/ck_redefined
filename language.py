@@ -25,6 +25,7 @@ class language:
         self.lang.rename = '重命名'
         self.lang.about = '关于'
         self.lang.chooselang = '选择语言'
+        self.lang.chooselangmsg = '选择语言后需要重启应用程序后才能生效，是否继续？'
         self.lang.item = '项'
         self.lang.newitem = '新建项'
         self.lang.deleteitem = '删除项'
@@ -33,6 +34,8 @@ class language:
         self.lang.eastereggmsg = '恭喜你发现了彩蛋( *^▽^* )'
         self.lang.setname = '设置名称：'
         self.lang.setitemdata = '修改抽卡物品数据'
+        self.lang.sddl = '说的道理'
+        self.lang.wow = '袜袄！！！'
 
     def en_US(self):
         self.lang.title = 'Wish stimulator'
@@ -52,6 +55,7 @@ class language:
         self.lang.rename = 'Rename'
         self.lang.about = 'About'
         self.lang.chooselang = 'Choose Language'
+        self.lang.chooselangmsg = 'After selecting the language, the application needs to be restarted for it to take effect. Do you want to continue?'
         self.lang.item = 'Item'
         self.lang.newitem = 'New Item'
         self.lang.deleteitem = 'Delete Item'
@@ -60,3 +64,5 @@ class language:
         self.lang.eastereggmsg = 'Congratulations! You have discovered an Easter egg!:P'
         self.lang.setname = 'Set name:'
         self.lang.setitemdata = 'Modify the data of items'
+        self.lang.sddl = 'What I said is reasonable'
+        self.lang.wow = 'WOW!!!'
