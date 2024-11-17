@@ -1,6 +1,10 @@
-from reck import DataLoading
+class lang:
 
-class Lang(DataLoading):
+    def __init__(self):
+        pass
 
-    def __init__(self): 
-        super().__init__()
+    def zh_CN(self):
+        pass
+
+    def en_US(self):
+        pass

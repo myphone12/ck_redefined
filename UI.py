@@ -4,6 +4,7 @@ from time import sleep
 from PIL import Image, ImageTk
 import threading, json, winsound, random, cv2, webbrowser,sys
 from reck import Ck
+import language
 
 class _UI:
 
@@ -139,17 +140,18 @@ class main_UI(_UI):
         self.tk.config(menu=self.wish_mainmenu)
     
     def ButtonLoading(self):
-        self.wish_button1 = ttk.Button(self.tk, text='One wish', width=10, command=self.OneWish)
-        self.wish_button1.grid(row=1, column=0, padx=20, pady=10)
-        self.wish_button2 = ttk.Button(self.tk, text='Ten wish', width=10, command=self.TenWish)
-        self.wish_button2.grid(row=1, column=1, padx=20, pady=10)
+        self.items['Button'].append(ttk.Button(self.tk, text='One wish', width=10, command=self.OneWish))
+        self.items['Button'][-1].grid(row=1, column=0, padx=20, pady=10)
+        self.items['Button'].append(ttk.Button(self.tk, text='Ten wish', width=10, command=self.TenWish))
+        self.items['Button'][-1].grid(row=1, column=1, padx=20, pady=10)
 
     def TextLoading(self):
-        self.wish_text1 = tk.Label(self.tk, width=80, height=10, 
-                            textvariable = self.WishDataVar, anchor='s', 
+        self.Varitems['TextVar'].append(tk.StringVar())
+        self.items['Text'].append(tk.Label(self.tk, width=80, height=10, 
+                            textvariable = self.Varitems['TextVar'][-1], anchor='s', 
                             font=("Microsoft Yahei UI", 9),fg='orange', 
-                            wraplength=500, relief='sunken')
-        self.wish_text1.grid(row=0, column=0, columnspan=2, padx=20, pady=10)
+                            wraplength=500, relief='sunken'))
+        self.items['Text'][-1].grid(row=0, column=0, columnspan=2, padx=20, pady=10)
     
 class Settings_UI(_UI):
 
