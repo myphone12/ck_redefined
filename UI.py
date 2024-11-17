@@ -6,9 +6,10 @@ import threading, json, winsound, random, cv2, webbrowser,sys
 from reck import Ck
 import language
 
-class _UI:
+class _UI(language.language):
 
     def __init__(self, TopLevel = False):
+        super().__init__()
         if TopLevel:
             self.tk = tk.Toplevel(TopLevel)
         else:
@@ -69,7 +70,8 @@ class main_UI(_UI):
 
     def __init__(self, TopLevel = False):
         super().__init__(TopLevel)
-        self.tk.title('Wish stimulator')
+        self.en_US()
+        self.tk.title(self.lang.title)
 
         self.WishDataVar = tk.StringVar()
         self.wish_text2Var = tk.StringVar()
