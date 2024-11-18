@@ -330,18 +330,18 @@ class Settings_UI(_UI, Loadlanguage):
             self.items['Entry'][-1].grid(row=tmp, column=5, padx=10)
             self.Varitems['EntryVar'][-1].set(str(self.database['data'][i]['大保底']))
             self.Varitems['CheckboxVar'].append(tk.IntVar())
-            self.items['Checkbox'].append(ttk.Checkbutton(self.tk, text='小保底', variable=self.Varitems['CheckboxVar'][-1]))
+            self.items['Checkbox'].append(ttk.Checkbutton(self.tk, text=self.lang.smg, variable=self.Varitems['CheckboxVar'][-1]))
             self.items['Checkbox'][-1].grid(row=tmp, column=2, padx=10)
             self.Varitems['CheckboxVar'][-1].set(bool(self.database['data'][i]['保底'] != '0'))
             self.Varitems['CheckboxVar'].append(tk.IntVar())
-            self.items['Checkbox'].append(ttk.Checkbutton(self.tk, text='大保底', variable=self.Varitems['CheckboxVar'][-1]))
+            self.items['Checkbox'].append(ttk.Checkbutton(self.tk, text=self.lang.bmg, variable=self.Varitems['CheckboxVar'][-1]))
             self.items['Checkbox'][-1].grid(row=tmp, column=4, padx=10)
             self.Varitems['CheckboxVar'][-1].set(bool(self.database['data'][i]['大保底'] != '0'))
             tmp += 1
         self.finalcloumn = tmp
         
     def ButtonLoading(self):
-        self.items['Button'].append(ttk.Button(self.tk, text=self.lang.setitemdata, width=20, command=self.ChangeItemData))
+        self.items['Button'].append(ttk.Button(self.tk, text=self.lang.setitemdata, width=25, command=self.ChangeItemData))
         self.items['Button'][-1].grid(row=0, column=0, columnspan=3, padx=20, pady=10)
         self.items['Button'].append(ttk.Button(self.tk, text=self.lang.save, width=20, command=self.SaveChange))
         self.items['Button'][-1].grid(row=0, column=3, columnspan=3, padx=20, pady=10)

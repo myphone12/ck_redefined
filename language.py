@@ -36,6 +36,8 @@ class language:
         self.lang.setitemdata = '修改抽卡物品数据'
         self.lang.sddl = '说的道理'
         self.lang.wow = '袜袄！！！'
+        self.lang.smg = '小保底'
+        self.lang.bmg = '大保底'
 
     def en_US(self):
         self.lang.title = 'Wish stimulator'
@@ -65,4 +67,6 @@ class language:
         self.lang.setname = 'Set name:'
         self.lang.setitemdata = 'Modify the data of items'
         self.lang.sddl = 'What I said is reasonable'
+        self.lang.smg = 'Small minimum guarantee'
+        self.lang.bmg = 'Big minimum guarantee'
         self.lang.wow = 'WOW!!!'
