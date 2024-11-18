@@ -38,6 +38,8 @@ class language:
         self.lang.wow = '袜袄！！！'
         self.lang.smg = '小保底  '
         self.lang.bmg = '大保底'
+        self.lang.option = '提示'
+        self.lang.optionmsg = '必须保留至少一项！'
 
     def en_US(self):
         self.lang.title = 'Wish stimulator'
@@ -70,3 +72,5 @@ class language:
         self.lang.smg = 'Small minimum guarantee'
         self.lang.bmg = 'Big minimum guarantee'
         self.lang.wow = 'WOW!!!'
+        self.lang.option = 'Option'
+        self.lang.optionmsg = 'At least one item must be retained!'

@@ -6,9 +6,9 @@ import threading, json, winsound, random, cv2, webbrowser,sys
 from reck import Ck
 import language
 
-class Loadlanguage(language.language):
+class _UI(language.language):
 
-    def __init__(self):
+    def __init__(self, TopLevel = False):
         super().__init__()
         with open('.\\language', 'r') as l:
             tmp = l.read()
@@ -16,11 +16,6 @@ class Loadlanguage(language.language):
                 self.zh_CN()
             elif tmp == 'en_US':
                 self.en_US()
-
-class _UI(language.language):
-
-    def __init__(self, TopLevel = False):
-        super().__init__()
         if TopLevel:
             self.tk = tk.Toplevel(TopLevel)
         else:
@@ -77,7 +72,7 @@ class _UI(language.language):
         self.tk.mainloop()
 
 
-class main_UI(_UI, Loadlanguage):
+class main_UI(_UI):
 
     def __init__(self, TopLevel = False):
         super().__init__(TopLevel)
@@ -166,7 +161,7 @@ class main_UI(_UI, Loadlanguage):
                             wraplength=500, relief='sunken'))
         self.items['Text'][-1].grid(row=0, column=0, columnspan=2, padx=20, pady=10)
     
-class Settings_UI(_UI, Loadlanguage):
+class Settings_UI(_UI):
 
     def __init__(self, TopLevel = False):
         super().__init__(TopLevel)
@@ -245,7 +240,7 @@ class Settings_UI(_UI, Loadlanguage):
             self.Reload()
             self.SaveChange()
         elif len(self.data[self.CurrentData]['data']) <= 1:
-            msg.showerror('提示','必须保留至少一项！')
+            msg.showerror(self.lang.option,self.lang.optionmsg)
 
     def Rename(self, data):
         self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.rename,data)
@@ -357,7 +352,7 @@ class Settings_UI(_UI, Loadlanguage):
             self.items['Button'].append(ttk.Button(self.tk, text=self.lang.deleteitem, command=lambda data=i:self.Del(data)))
             self.items['Button'][-1].grid(row=list(self.database['data'].keys()).index(i) + 2, column=7, padx=10)
 
-class CreateNewWindow(_UI, Loadlanguage):
+class CreateNewWindow(_UI):
 
     def __init__(self, TopLevel = False, title = 'New', varset = ''):
         super().__init__(TopLevel)
@@ -440,7 +435,7 @@ class Player(_UI):
             winsound.PlaySound(self.playitem[0:-3] + 'wav',winsound.SND_ASYNC or winsound.SND_FILENAME)
             self.update_frame()
         
-class ItemDataSettings_UI(_UI, Loadlanguage):
+class ItemDataSettings_UI(_UI):
 
     def __init__(self, TopLevel=False, data = 'default'):
         super().__init__(TopLevel)
