@@ -104,7 +104,7 @@ class main_UI(_UI, Loadlanguage):
         if not self.easteregg:
             msg.showinfo(self.lang.easteregg,self.lang.eastereggmsg)
             self.easteregg = 1
-            match random.choice([1]):
+            match random.choice([0, 1, 2]):
                 case 0:
                     self.wish_text2 = tk.Label(self.tk, textvariable=self.wish_text2Var, 
                                     font=('Microsoft Yahei UI', 9))
@@ -122,7 +122,7 @@ class main_UI(_UI, Loadlanguage):
     
     def _video1(self):
         while True:
-            sleep(1)
+            sleep(0.1)
             if self.video.finish == 1:
                 image = Player(self.tk, '.\\src\\wow.mp4', self.lang.wow , '+0+0')
                 image.PrepareUILoading()
@@ -257,6 +257,7 @@ class Settings_UI(_UI, Loadlanguage):
     def _Rename(self, data):
         tmp = {}
         while True:
+            sleep(0.1)
             if self.CreateNewWindow.ReturnData != '' and self.CreateNewWindow.ReturnData != '0':
                 for i in self.data[self.CurrentData]['data']:
                     if i == data:
@@ -277,6 +278,7 @@ class Settings_UI(_UI, Loadlanguage):
     def _CreateNew(self):
         tmp = {}
         while True:
+            sleep(0.1)
             if self.CreateNewWindow.ReturnData != '' and self.CreateNewWindow.ReturnData != '0':
                 for i in self.data[self.CurrentData]['data']:
                     tmp[i] = self.data[self.CurrentData]['data'][i]
