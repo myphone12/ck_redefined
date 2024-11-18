@@ -36,7 +36,7 @@ class language:
         self.lang.setitemdata = '修改抽卡物品数据'
         self.lang.sddl = '说的道理'
         self.lang.wow = '袜袄！！！'
-        self.lang.smg = '小保底'
+        self.lang.smg = '小保底  '
         self.lang.bmg = '大保底'
 
     def en_US(self):
