@@ -40,6 +40,7 @@ class language:
         self.lang.bmg = '大保底'
         self.lang.option = '提示'
         self.lang.optionmsg = '必须保留至少一项！'
+        self.lang.probability = '概率：'
 
     def en_US(self):
         self.lang.title = 'Wish stimulator'
@@ -74,3 +75,4 @@ class language:
         self.lang.wow = 'WOW!!!'
         self.lang.option = 'Option'
         self.lang.optionmsg = 'At least one item must be retained!'
+        self.lang.probability = 'probability:'

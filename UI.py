@@ -24,7 +24,6 @@ class _UI(language.language):
         self.tk.resizable(0,0)
         screenwidth = self.tk.winfo_screenwidth()
         screenheight = self.tk.winfo_screenheight()
-        self.tk.update()
         width = self.tk.winfo_width()
         height = self.tk.winfo_height()
         size = '+%d+%d' % ((screenwidth - width)/2, (screenheight - height)/2)
@@ -109,9 +108,9 @@ class main_UI(_UI):
                     self.tk.update()
                 case 1:
                     self.video = Player(self.tk, '.\\src\\sddl.mp4', self.lang.sddl)
+                    self.video.PrepareUILoading()
                     self.wish_text2_threading = threading.Thread(target=self._video1, daemon=True)
                     self.wish_text2_threading.start()
-                    self.video.PrepareUILoading()
                 case 2:
                     webbrowser.open('https://www.bilibili.com/video/BV1GJ411x7h7/')
     
@@ -181,13 +180,13 @@ class Settings_UI(_UI):
             n += 1
             for j in self.database['data'][i]:
                 tmp += 1
-                if j == '保底':
+                if j == 'SMG':
                     if not self.Varitems['CheckboxVar'][int(tmp - n)].get():
-                        self.data[self.CurrentData]['data'][i]['保底'] = '0'
+                        self.data[self.CurrentData]['data'][i]['SMG'] = '0'
                         continue
-                if j == '大保底':
+                if j == 'BMG':
                     if not self.Varitems['CheckboxVar'][int(tmp - n)].get():
-                        self.data[self.CurrentData]['data'][i]['大保底'] = '0'
+                        self.data[self.CurrentData]['data'][i]['BMG'] = '0'
                         continue
                 self.data[self.CurrentData]['data'][i][j] = self.Varitems['EntryVar'][tmp - 1].get()
             
@@ -220,9 +219,9 @@ class Settings_UI(_UI):
 
     def CreateNew(self):
         self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.newitem)
-        self.rename_thread = threading.Thread(target=lambda:self._CreateNew())
-        self.rename_thread.start()
         self.CreateNewWindow.PrepareUILoading()
+        self.rename_thread = threading.Thread(target=lambda:self._CreateNew(), daemon=True)
+        self.rename_thread.start()
 
     def Del(self, data):
         n = msg.askokcancel(title=self.lang.deleteitem, message=self.lang.deleteitemmsg)
@@ -244,9 +243,9 @@ class Settings_UI(_UI):
 
     def Rename(self, data):
         self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.rename,data)
-        self.rename_thread = threading.Thread(target=lambda:self._Rename(data))
-        self.rename_thread.start()
         self.CreateNewWindow.PrepareUILoading()
+        self.rename_thread = threading.Thread(target=lambda:self._Rename(data), daemon=True)
+        self.rename_thread.start()
         
         
     def _Rename(self, data):
@@ -277,20 +276,21 @@ class Settings_UI(_UI):
             if self.CreateNewWindow.ReturnData != '' and self.CreateNewWindow.ReturnData != '0':
                 for i in self.data[self.CurrentData]['data']:
                     tmp[i] = self.data[self.CurrentData]['data'][i]
-                tmp[self.CreateNewWindow.ReturnData] = {'概率': '0', '保底': '0', '大保底': 0}
+                tmp[self.CreateNewWindow.ReturnData] = {'probability': '0', 'SMG': '0', 'BMG': '0'}
                 del self.data[self.CurrentData]['data']
                 self.data[self.CurrentData]['data'] = tmp
                 del self.database['data']
                 self.database['data'] = tmp
                 self.Reload()
                 self.SaveChange()
+                self.tk.update()
                 break
             if self.CreateNewWindow.ReturnData == '0':
                 break
     
     def TextLoading(self):
         for i in range(len(self.database['data'])):
-            self.items['Text'].append(tk.Label(self.tk, text=list(self.database['data'].keys())[i] + '概率:'))
+            self.items['Text'].append(tk.Label(self.tk, text=list(self.database['data'].keys())[i] + self.lang.probability))
             self.items['Text'][i].grid(row=i+2, column=0, padx=5, pady=5)
 
         # self.items['Text']3 = tk.Label(self.tk, text='五星Up；  四星Up：')
@@ -317,23 +317,23 @@ class Settings_UI(_UI):
             self.Varitems['EntryVar'].append(tk.StringVar())
             self.items['Entry'].append(ttk.Entry(self.tk, textvariable=self.Varitems['EntryVar'][-1], width=8))
             self.items['Entry'][-1].grid(row=tmp, column=1, padx=5)
-            self.Varitems['EntryVar'][-1].set(str(self.database['data'][i]['概率']))
+            self.Varitems['EntryVar'][-1].set(str(self.database['data'][i]['probability']))
             self.Varitems['EntryVar'].append(tk.StringVar())
             self.items['Entry'].append(ttk.Entry(self.tk, textvariable=self.Varitems['EntryVar'][-1], width=5))
             self.items['Entry'][-1].grid(row=tmp, column=3, padx=5)
-            self.Varitems['EntryVar'][-1].set(str(self.database['data'][i]['保底']))
+            self.Varitems['EntryVar'][-1].set(str(self.database['data'][i]['SMG']))
             self.Varitems['EntryVar'].append(tk.StringVar())
             self.items['Entry'].append(ttk.Entry(self.tk, textvariable=self.Varitems['EntryVar'][-1], width=5))
             self.items['Entry'][-1].grid(row=tmp, column=5, padx=10)
-            self.Varitems['EntryVar'][-1].set(str(self.database['data'][i]['大保底']))
+            self.Varitems['EntryVar'][-1].set(str(self.database['data'][i]['BMG']))
             self.Varitems['CheckboxVar'].append(tk.IntVar())
             self.items['Checkbox'].append(ttk.Checkbutton(self.tk, text=self.lang.smg, variable=self.Varitems['CheckboxVar'][-1]))
             self.items['Checkbox'][-1].grid(row=tmp, column=2, padx=10)
-            self.Varitems['CheckboxVar'][-1].set(bool(self.database['data'][i]['保底'] != '0'))
+            self.Varitems['CheckboxVar'][-1].set(bool(self.database['data'][i]['SMG'] != '0'))
             self.Varitems['CheckboxVar'].append(tk.IntVar())
             self.items['Checkbox'].append(ttk.Checkbutton(self.tk, text=self.lang.bmg, variable=self.Varitems['CheckboxVar'][-1]))
             self.items['Checkbox'][-1].grid(row=tmp, column=4, padx=10)
-            self.Varitems['CheckboxVar'][-1].set(bool(self.database['data'][i]['大保底'] != '0'))
+            self.Varitems['CheckboxVar'][-1].set(bool(self.database['data'][i]['BMG'] != '0'))
             tmp += 1
         self.finalcloumn = tmp
         
@@ -447,7 +447,16 @@ class ItemDataSettings_UI(_UI):
             self.CurrentData = data
     
     def Save(self):
-        pass
+        tmp = -1
+        for i in self.database:
+            tmp += 1
+            if i != 'data':
+                self.data[self.CurrentData][i] = eval("[" + self.Varitems['EntryVar'][tmp].get() + "]")
+        
+        with open('.\\database.json', 'w+', encoding='utf-8') as file:
+            file.write(json.dumps(self.data, ensure_ascii=False, indent=4))
+
+
 
     def TextLoading(self):
         for i in range(len(self.database) - 1):
