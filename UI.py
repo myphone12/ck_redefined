@@ -3,19 +3,22 @@ from tkinter import ttk, messagebox as msg
 from time import sleep
 from PIL import Image, ImageTk
 import threading, json, winsound, random, cv2, webbrowser,sys
-from reck import Ck
+from reck import Ck, DataLoading
 import language
 
-class _UI(language.language):
+class _UI(DataLoading):
 
-    def __init__(self, TopLevel = False):
-        super().__init__()
+    def __init__(self, TopLevel = False, dataload = False):
+        super().__init__(dataload)
+        self.lang = language.language()
         with open('.\\language', 'r') as l:
             tmp = l.read()
             if tmp == 'zh_CN':
-                self.zh_CN()
+                self.lang.zh_CN()
             elif tmp == 'en_US':
-                self.en_US()
+                self.lang.en_US()
+        if dataload:
+            self.Dataload()
         if TopLevel:
             self.tk = tk.Toplevel(TopLevel)
         else:
@@ -74,7 +77,7 @@ class _UI(language.language):
 class main_UI(_UI):
 
     def __init__(self, TopLevel = False):
-        super().__init__(TopLevel)
+        super().__init__(TopLevel, dataload = True)
         self.ck = Ck()
         self.tk.title(self.lang.title)
 
@@ -93,6 +96,9 @@ class main_UI(_UI):
     def OpenSettings(self):
         self.SettingsPage = Settings_UI(self.tk)
         self.SettingsPage.PrepareUILoading()
+    
+    def ChooseDB(self, data):
+        self.ck = Ck(set= data)
     
     def EasterEgg(self):
         if not self.easteregg:
@@ -138,10 +144,9 @@ class main_UI(_UI):
     def MenuLoading(self):
         self.wish_mainmenu = tk.Menu(self.tk, tearoff=False)
         self.wish_menu1 = tk.Menu(self.wish_mainmenu, tearoff=False)
-        self.wish_menu1.add_command(label='112', command=self.OneWish)
-        self.wish_menu1.add_command(label='113', command=self.TenWish)
-        self.wish_mainmenu.add_cascade(label='11', menu=self.wish_menu1)
-        self.wish_mainmenu.add_command(label='112', command=self.OneWish)
+        for i in self.data.keys():
+            self.wish_menu1.add_command(label=i, command=lambda data=i:self.ChooseDB(data))
+        self.wish_mainmenu.add_cascade(label=self.lang.choosedb, menu=self.wish_menu1)
         self.wish_mainmenu.add_command(label=self.lang.settings, command=self.OpenSettings)
         self.wish_mainmenu.add_command(label='  ', command=self.EasterEgg)
         self.tk.config(menu=self.wish_mainmenu)
@@ -163,13 +168,8 @@ class main_UI(_UI):
 class Settings_UI(_UI):
 
     def __init__(self, TopLevel = False):
-        super().__init__(TopLevel)
+        super().__init__(TopLevel, dataload = True)
         self.tk.title(self.lang.settings)
-
-        with open('.\\database.json', 'r', encoding='utf-8') as file:
-            self.data = json.load(file)
-            self.database = self.data['default']
-            self.CurrentData = 'default'
     
     def About(self):
         pass
@@ -290,7 +290,7 @@ class Settings_UI(_UI):
     
     def TextLoading(self):
         for i in range(len(self.database['data'])):
-            self.items['Text'].append(tk.Label(self.tk, text=list(self.database['data'].keys())[i] + self.lang.probability))
+            self.items['Text'].append(tk.Label(self.tk, text=list(self.database['data'].keys())[i] + ' ' + self.lang.probability))
             self.items['Text'][i].grid(row=i+2, column=0, padx=5, pady=5)
 
         # self.items['Text']3 = tk.Label(self.tk, text='五星Up；  四星Up：')
@@ -438,40 +438,44 @@ class Player(_UI):
 class ItemDataSettings_UI(_UI):
 
     def __init__(self, TopLevel=False, data = 'default'):
-        super().__init__(TopLevel)
+        super().__init__(TopLevel, dataload = data)
 
         self.tk.title(self.lang.setitemdata)
-        with open('.\\database.json', 'r', encoding='utf-8') as file:
-            self.data = json.load(file)
-            self.database = self.data[data]
-            self.CurrentData = data
     
     def Save(self):
-        tmp = -1
+        tmp = 0
         for i in self.database:
-            tmp += 1
             if i != 'data':
-                self.data[self.CurrentData][i] = eval("[" + self.Varitems['EntryVar'][tmp].get() + "]")
+                for j in self.database[i]:
+                    self.data[self.CurrentData][i][j] = eval('[' + self.Varitems['EntryVar'][tmp].get() + ']')
+                    tmp += 1
         
         with open('.\\database.json', 'w+', encoding='utf-8') as file:
             file.write(json.dumps(self.data, ensure_ascii=False, indent=4))
-
-
+        self.tk.destroy()
 
     def TextLoading(self):
-        for i in range(len(self.database) - 1):
-            self.items['Text'].append(tk.Label(self.tk, text=list(self.database.keys())[i] + ':'))
-            self.items['Text'][i].grid(row=i, column=0, padx=5, pady=5)
+        tmp = 0
+        for i in self.database:
+            if i != 'data':
+                for j in self.database[i]:
+                    if j == 'main':
+                        self.items['Text'].append(tk.Label(self.tk, text= i + ' ' + self.lang.res + ':'))
+                    else:
+                        self.items['Text'].append(tk.Label(self.tk, text= i + ' ' + self.lang.bmg + ':'))
+                    self.items['Text'][-1].grid(row=tmp, column=0, padx=5, pady=5)
+                    tmp += 1
     
     def InputLoading(self):
         tmp = 0
         for i in self.database:
             if i != 'data':
-                self.Varitems['EntryVar'].append(tk.StringVar())
-                self.items['Entry'].append(ttk.Entry(self.tk, textvariable=self.Varitems['EntryVar'][-1], width=80))
-                self.items['Entry'][-1].grid(row=tmp, column=1, padx=10)
-                self.Varitems['EntryVar'][-1].set(str(self.database[i])[1:-1])
-            tmp += 1
+                for j in self.database[i]:
+                    self.Varitems['EntryVar'].append(tk.StringVar())
+                    self.items['Entry'].append(ttk.Entry(self.tk, textvariable=self.Varitems['EntryVar'][-1], width=80))
+                    self.items['Entry'][-1].grid(row=tmp, column=1, padx=10)
+                    self.Varitems['EntryVar'][-1].set(str(self.database[i][j])[1:-1])
+                    tmp += 1
         self.finalcolumn = tmp
     
     def ButtonLoading(self):
