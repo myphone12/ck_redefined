@@ -9,7 +9,8 @@ import language
 class _UI(DataLoading):
 
     def __init__(self, TopLevel = False, dataload = False):
-        super().__init__(dataload)
+        if dataload:
+            super().__init__(dataload)
         self.lang = language.language()
         with open('.\\language', 'r') as l:
             tmp = l.read()
@@ -17,8 +18,6 @@ class _UI(DataLoading):
                 self.lang.zh_CN()
             elif tmp == 'en_US':
                 self.lang.en_US()
-        if dataload:
-            self.Dataload()
         if TopLevel:
             self.tk = tk.Toplevel(TopLevel)
         else:
@@ -77,7 +76,7 @@ class _UI(DataLoading):
 class main_UI(_UI):
 
     def __init__(self, TopLevel = False):
-        super().__init__(TopLevel, dataload = True)
+        super().__init__(TopLevel, dataload = 'default')
         self.ck = Ck()
         self.tk.title(self.lang.title)
 
@@ -168,7 +167,7 @@ class main_UI(_UI):
 class Settings_UI(_UI):
 
     def __init__(self, TopLevel = False):
-        super().__init__(TopLevel, dataload = True)
+        super().__init__(TopLevel, dataload = 'default')
         self.tk.title(self.lang.settings)
     
     def About(self):

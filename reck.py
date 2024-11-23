@@ -5,8 +5,6 @@ class DataLoading:
 
     def __init__(self, set = 'default'):
         self.set = set
-    
-    def Dataload(self):
         with open('.\\database.json', 'r', encoding='utf-8') as file:
             self.data = json.load(file)
             if self.set in self.data:
@@ -14,7 +12,7 @@ class DataLoading:
             else:
                 self.database = self.data['default']
             self.CurrentData = self.set
-    
+
     def CreateTimeSaveDB(self):
         self.TimesDB = {}
 
