@@ -169,9 +169,6 @@ class Settings_UI(_UI):
     def __init__(self, TopLevel = False):
         super().__init__(TopLevel, dataload = 'default')
         self.tk.title(self.lang.settings)
-    
-    def About(self):
-        pass
 
     def SaveChange(self):
         tmp = 0;n = 1
@@ -287,6 +284,9 @@ class Settings_UI(_UI):
             if self.CreateNewWindow.ReturnData == '0':
                 break
     
+    def About(self):
+        msg.showinfo(self.lang.about,self.lang.aboutmsg)
+
     def TextLoading(self):
         for i in range(len(self.database['data'])):
             self.items['Text'].append(tk.Label(self.tk, text=list(self.database['data'].keys())[i] + ' ' + self.lang.probability))

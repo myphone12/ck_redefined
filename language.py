@@ -38,6 +38,7 @@ class language:
         self.optionmsg = '必须保留至少一项！'
         self.probability = '概率：'
         self.res = '物品'
+        self.aboutmsg = '作者：smb-studio\nGithub项目：myphone12/ck_redefined\n欢迎star该项目或给该项目提issues哦！！_(:з」∠)_'
 
     def en_US(self):
         self.title = 'Wish stimulator'
@@ -74,3 +75,4 @@ class language:
         self.optionmsg = 'At least one item must be retained!'
         self.probability = 'probability:'
         self.res = 'resources'
+        self.aboutmsg = 'author: smb-studio\nGithub repositories: myphone12/ck_redefined\nWelcome to star this project or raise issues for it!! _(:з」∠)_'
