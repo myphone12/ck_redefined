@@ -83,19 +83,19 @@
         },
         "data": {
             "四星1": {
-                "probability": "0.1",
+                "probability": "0.675656",
                 "SMG": "1",
                 "BMG": "0"
             },
             "222": {
-                "probability": "0",
-                "SMG": "0",
+                "probability": "0.34",
+                "SMG": "3523",
                 "BMG": "0"
             },
             "3文": {
-                "probability": "0",
+                "probability": "0.34",
                 "SMG": "0",
-                "BMG": "2224"
+                "BMG": "3434"
             }
         }
     },

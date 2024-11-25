@@ -14,7 +14,9 @@ class DataLoading:
             self.CurrentData = self.set
 
     def CreateTimeSaveDB(self):
-        self.TimesDB = {}
+        self.TimesDB = {'all':0}
+        for i in self.data:
+            self.TimesDB[i] = [0,0]
 
 class Ck(DataLoading):
 
@@ -26,12 +28,14 @@ class Ck(DataLoading):
 
     def __init__(self, set='default'):
         super().__init__()
+        self.ResultData = []
+        self.CreateTimeSaveDB()
     
     def __getitem__(self, num):
         return self.ResultData[num]
     
     def __len__(self):
-        return self.dt[0]
+        return self.TimesDB['all']
     
     def __eq__(self, other):
         if self.set == other.set:
@@ -39,8 +43,22 @@ class Ck(DataLoading):
         return False
     
     def __repr__(self):
-        return f"{self.ResultData}"
+        return f'{self.ResultData}'
     
+    def PrepareCkLoading(self):
+        self.items = {}
+        for i in self.database:
+            if i != 'data':
+                self.items[i] = self.database[i]
+        self.probabilities = {}
+        for i in self.database['data']:
+            self.probabilities[i] = {}
+            for j in self.database[i]:
+                if j != '0':
+                    self.probabilities[i][j] = self.database['data'][i][j]
+                else:
+                    self.probabilities[i][j] = False
+
     def getRandomResult(self,data):
         tmp = r.random()
         if tmp <= data:

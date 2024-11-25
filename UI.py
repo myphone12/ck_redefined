@@ -171,11 +171,34 @@ class Settings_UI(_UI):
         self.tk.title(self.lang.settings)
 
     def SaveChange(self):
+        tmp = list(range(len(self.Varitems['EntryVar'])))
+        for i in range(0,len(self.Varitems['EntryVar']),3):
+            tmp.remove(i)
+            try:
+                if float(self.Varitems['EntryVar'][i].get()) <= 0 or float(self.Varitems['EntryVar'][i].get()) >= 1:
+                    msg.showerror(self.lang.error, self.lang.probabilityerror)
+                    return 0
+            except:
+                msg.showerror(self.lang.error, self.lang.probabilityerror)
+                return 0
+            
+        for i in tmp:
+            try:
+                if float(self.Varitems['EntryVar'][i].get()) < 0:
+                    msg.showerror(self.lang.error, self.lang.mgerror)
+                    return 0
+            except:
+                msg.showerror(self.lang.error, self.lang.mgerror)
+                return 0
+            
+            
+        
         tmp = 0;n = 1
         for i in self.database['data']:
             n += 1
             for j in self.database['data'][i]:
                 tmp += 1
+                self.data[self.CurrentData]['data'][i][j] = self.Varitems['EntryVar'][tmp - 1].get()
                 if j == 'SMG':
                     if not self.Varitems['CheckboxVar'][int(tmp - n)].get():
                         self.data[self.CurrentData]['data'][i]['SMG'] = '0'
@@ -184,11 +207,10 @@ class Settings_UI(_UI):
                     if not self.Varitems['CheckboxVar'][int(tmp - n)].get():
                         self.data[self.CurrentData]['data'][i]['BMG'] = '0'
                         continue
-                self.data[self.CurrentData]['data'][i][j] = self.Varitems['EntryVar'][tmp - 1].get()
-            
             
         with open('.\\database.json', 'w+', encoding='utf-8') as file:
             file.write(json.dumps(self.data, ensure_ascii=False, indent=4))
+        self.Reload()
 
     def setDB(self,database):
         self.CurrentData = database
