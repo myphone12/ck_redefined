@@ -189,9 +189,7 @@ class Settings_UI(_UI):
                     return 0
             except:
                 msg.showerror(self.lang.error, self.lang.mgerror)
-                return 0
-            
-            
+                return 0          
         
         tmp = 0;n = 1
         for i in self.database['data']:
@@ -281,7 +279,6 @@ class Settings_UI(_UI):
                 del self.database['data']
                 self.database['data'] = tmp
                 self.CreateNewWindow.ReturnData = ''
-                self.Reload()
                 self.SaveChange()
                 break
             if self.CreateNewWindow.ReturnData == '0':
@@ -299,9 +296,7 @@ class Settings_UI(_UI):
                 self.data[self.CurrentData]['data'] = tmp
                 del self.database['data']
                 self.database['data'] = tmp
-                self.Reload()
                 self.SaveChange()
-                self.tk.update()
                 break
             if self.CreateNewWindow.ReturnData == '0':
                 break
