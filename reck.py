@@ -96,51 +96,47 @@ class Ck(DataLoading):
             return (tmp,0)
     
     def Baodi(self):
-        if self.dt[4] >= self.GoldDabaodi and self.GoldBaodi:
-            return 4
-        elif self.dt[3] >= self.GoldBaodi and self.GoldBaodi:
-            return 3
-        elif self.dt[2] >= self.PurpleDabaodi and self.PurpleBaodi:
-            return 2
-        elif self.dt[1] >= self.PurpleBaodi and self.PurpleBaodi:
-            return 1
-        else:
-            return 0
-    
-    def getItemLevel(self):
-        Level = 0
-        for i in range(len(self.dt)):
-            self.dt[i] += 1
-        Level = self.Baodi()
-        if Level == 0:
-            Level = self.Chouka()
-        if Level > 0:
-            if Level == 4:
-                self.dt[3] = 0; self.dt[4] = 0
-            elif Level == 2:
-                self.dt[2] = 0; self.dt[1] = 0
-            else:
-                self.dt[Level] = 0
-        return Level
-    
+        for i in self.TimesDB:
+            if i == 'all':
+                continue
+            if self.TimesDB[i][1] >= self.probabilities[i]['BMG'] and self.probabilities[i]['BMG']:
+                self.TimesDB[i] = [0,0]
+                return (i,1)
+            elif self.TimesDB[i][0] >= self.probabilities[i]['SMG'] and self.probabilities[i]['SMG']:
+                self.TimesDB[i][0] = 0
+                return (i,r.choice([0,1]))
+        return 0
+
     def ck(self, cishu = 1, ReturnLevel = 0):
         result = []
-        a = []
         if cishu <= 0:
             return None
         for i in range(cishu):
-            a.append(self.getItemLevel())
-            if a[i] == 0:
-                result.append(r.choice(self.data['Blue']))
-            if a[i] == 1:
-                result.append(r.choice(self.data['Purple']))
-            if a[i] == 2:
-                result.append(r.choice(self.data['UPpurple']))
-            if a[i] == 3:
-                result.append(r.choice(self.data['Gold']))
-            if a[i] == 4:
-                result.append(r.choice(self.data['UPGold']))
+            self.TimesDB['all'] += 1
+            tmp = self.Chouka()
+            baodi = self.Baodi()
+            if baodi:
+                if baodi[1] == 1:
+                    self.TimesDB[baodi[0]] = [1,1]
+                    result.append(r.choice(self.database[baodi[0]]['BMG']))
+                    continue
+                else:
+                    self.TimesDB[baodi[0]][0] = 0
+                    self.TimesDB[baodi[0]][1] += 1
+                    result.append(r.choice(self.database[baodi[0]]['main']))
+                    continue
+            if tmp[1] == 1:
+                self.TimesDB[tmp[0]] = [1,1]
+                result.append(r.choice(self.database[tmp[0]]['BMG']))
+                continue
+            else:
+                self.TimesDB[tmp[0]][0] = 0
+                self.TimesDB[tmp[0]][1] += 1
+                result.append(r.choice(self.database[tmp[0]]['main']))
+                continue
+
+
         self.ResultData.append(result)
         if ReturnLevel:
-            return (result,a)
+            return (result)
         return result
