@@ -29,7 +29,8 @@ class Ck(DataLoading):
     def __init__(self, set='default'):
         super().__init__()
         self.ResultData = []
-        self.CreateTimeSaveDB()
+        self.PrepareCkLoading()
+        
     
     def __getitem__(self, num):
         return self.ResultData[num]
@@ -47,17 +48,37 @@ class Ck(DataLoading):
     
     def PrepareCkLoading(self):
         self.items = {}
+        self.probabilitylist = []
+        self.CreateTimeSaveDB()
         for i in self.database:
             if i != 'data':
                 self.items[i] = self.database[i]
         self.probabilities = {}
         for i in self.database['data']:
             self.probabilities[i] = {}
-            for j in self.database[i]:
-                if j != '0':
-                    self.probabilities[i][j] = self.database['data'][i][j]
+            for j in self.database['data'][i]:
+                if j == 'probability':
+                    self.probabilities[i][j] = float(self.database['data'][i][j])
                 else:
-                    self.probabilities[i][j] = False
+                    if self.database['data'][i][j] != '0':
+                        self.probabilities[i][j] = int(self.database['data'][i][j])
+                    else:
+                        self.probabilities[i][j] = False
+            self.probabilitylist.append(float(self.database['data'][i]['probability']))
+        self.probabilitykeys = list(self.probabilities.keys())
+        self.CreateProbablityPool()
+    
+    def CreateProbablityPool(self):
+        tmp = []
+        for i in self.probabilitylist:
+            tmp.append(str(i))
+        for i in range(len(tmp)):
+            tmp[i] = len(tmp[i])
+        maxlen = max(tmp) - 2
+        tmp = []
+        for i in self.probabilitylist:
+            tmp.append(int(i*10**maxlen))
+        self.weightlist = tmp
 
     def getRandomResult(self,data):
         tmp = r.random()
@@ -66,13 +87,15 @@ class Ck(DataLoading):
         else:
             return 0
 
-    def Chouka(self):
-        if self.getRandomResult(self.Gold):
-            return r.choice([3,4])
-        elif self.getRandomResult(self.Purple):
-            return r.choice([1,2])
-        else:
-            return 0
+    def Chouka(self,cishu):
+        tmp = r.choices(self.probabilitykeys, weights=self.weightlist, k=cishu)
+        tmp1 = []
+        for i in tmp:
+            if self.probabilities[i]['BMG']:
+                tmp1.append((i,r.choice([0,1])))
+            else:
+                tmp1.append((i,0))
+        return tmp1
     
     def Baodi(self):
         if self.dt[4] >= self.GoldDabaodi and self.GoldBaodi:
