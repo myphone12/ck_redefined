@@ -82,18 +82,18 @@
             ]
         },
         "data": {
-            "四星1": {
-                "probability": "0.675656",
+            "五星": {
+                "probability": "0.006",
                 "SMG": "1",
                 "BMG": "1"
             },
-            "222": {
-                "probability": "0.34",
+            "四星": {
+                "probability": "0.02",
                 "SMG": "3523",
                 "BMG": "0"
             },
-            "3文": {
-                "probability": "0.34",
+            "三星": {
+                "probability": "0.974",
                 "SMG": "0",
                 "BMG": "0"
             }

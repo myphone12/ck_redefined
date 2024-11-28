@@ -15,8 +15,9 @@ class DataLoading:
 
     def CreateTimeSaveDB(self):
         self.TimesDB = {'all':0}
-        for i in self.data:
-            self.TimesDB[i] = [0,0]
+        for i in self.database:
+            if i != 'data':
+                self.TimesDB[i] = [0,0]
 
 class Ck(DataLoading):
 
@@ -87,15 +88,12 @@ class Ck(DataLoading):
         else:
             return 0
 
-    def Chouka(self,cishu):
-        tmp = r.choices(self.probabilitykeys, weights=self.weightlist, k=cishu)
-        tmp1 = []
-        for i in tmp:
-            if self.probabilities[i]['BMG']:
-                tmp1.append((i,r.choice([0,1])))
-            else:
-                tmp1.append((i,0))
-        return tmp1
+    def Chouka(self):
+        tmp = r.choices(self.probabilitykeys, weights=self.weightlist, k=1)[0]
+        if self.probabilities[tmp]['BMG']:
+            return (tmp,r.choice([0,1]))
+        else:
+            return (tmp,0)
     
     def Baodi(self):
         if self.dt[4] >= self.GoldDabaodi and self.GoldBaodi:
