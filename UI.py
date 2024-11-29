@@ -175,7 +175,7 @@ class Settings_UI(_UI):
         for i in range(0,len(self.Varitems['EntryVar']),3):
             tmp.remove(i)
             try:
-                if float(self.Varitems['EntryVar'][i].get()) <= 0 or float(self.Varitems['EntryVar'][i].get()) >= 1:
+                if float(self.Varitems['EntryVar'][i].get()) <= 0 or float(self.Varitems['EntryVar'][i].get()) > 1:
                     msg.showerror(self.lang.error, self.lang.probabilityerror)
                     return 0
             except:
@@ -243,15 +243,26 @@ class Settings_UI(_UI):
         n = msg.askokcancel(title=self.lang.deleteitem, message=self.lang.deleteitemmsg)
         if n and len(self.data[self.CurrentData]['data']) > 1:
             tmp = {}
+            tmp1 = {}
+            for i in self.data[self.CurrentData]:
+                if i == data or i == 'data':
+                    continue
+                else:
+                    tmp1[i] = self.data[self.CurrentData][i]
             for i in self.data[self.CurrentData]['data']:
                 if i == data:
                        pass
                 else:
                     tmp[i] = self.data[self.CurrentData]['data'][i]
-            del self.data[self.CurrentData]['data']
-            self.data[self.CurrentData]['data'] = tmp
-            del self.database['data']
-            self.database['data'] = tmp
+            tmp1['data'] = tmp
+            tmp = {}
+            for i in self.data:
+                if i == self.CurrentData:
+                    tmp[i] = tmp1
+                else:
+                    tmp[i] = self.data[i]
+            self.data = tmp
+            self.database = tmp1
             self.Reload()
             self.SaveChange()
         elif len(self.data[self.CurrentData]['data']) <= 1:
@@ -266,18 +277,31 @@ class Settings_UI(_UI):
         
     def _Rename(self, data):
         tmp = {}
+        tmp1 = {}
         while True:
             sleep(0.1)
             if self.CreateNewWindow.ReturnData != '' and self.CreateNewWindow.ReturnData != '0':
+                for i in self.data[self.CurrentData]:
+                    if i == data:
+                        tmp1[self.CreateNewWindow.ReturnData] = self.data[self.CurrentData][i]
+                    elif i == 'data':
+                        continue
+                    else:
+                        tmp1[i] = self.data[self.CurrentData][i]
                 for i in self.data[self.CurrentData]['data']:
                     if i == data:
                         tmp[self.CreateNewWindow.ReturnData] = self.data[self.CurrentData]['data'][i]
                     else:
                         tmp[i] = self.data[self.CurrentData]['data'][i]
-                del self.data[self.CurrentData]['data']
-                self.data[self.CurrentData]['data'] = tmp
-                del self.database['data']
-                self.database['data'] = tmp
+                tmp1['data'] = tmp
+                tmp = {}
+                for i in self.data:
+                    if i == self.CurrentData:
+                        tmp[i] = tmp1
+                    else:
+                        tmp[i] = self.data[i]
+                self.data = tmp
+                self.database = tmp1
                 self.CreateNewWindow.ReturnData = ''
                 self.SaveChange()
                 break
@@ -286,16 +310,28 @@ class Settings_UI(_UI):
 
     def _CreateNew(self):
         tmp = {}
+        tmp1 = {}
         while True:
             sleep(0.1)
             if self.CreateNewWindow.ReturnData != '' and self.CreateNewWindow.ReturnData != '0':
+                for i in self.data[self.CurrentData]:
+                    if i == 'data':
+                        continue
+                    tmp1[i] = self.data[self.CurrentData][i]
+                tmp1[self.CreateNewWindow.ReturnData] = {'BMG':[], 'main':[] }
                 for i in self.data[self.CurrentData]['data']:
                     tmp[i] = self.data[self.CurrentData]['data'][i]
-                tmp[self.CreateNewWindow.ReturnData] = {'probability': '0', 'SMG': '0', 'BMG': '0'}
-                del self.data[self.CurrentData]['data']
-                self.data[self.CurrentData]['data'] = tmp
-                del self.database['data']
-                self.database['data'] = tmp
+                tmp[self.CreateNewWindow.ReturnData] = {'probability': '1', 'SMG': '0', 'BMG': '0'}
+                tmp1['data'] = tmp
+                tmp = {}
+                for i in self.data:
+                    if i == self.CurrentData:
+                        tmp[i] = tmp1
+                    else:
+                        tmp[i] = self.data[i]
+                self.data = tmp
+                self.database = tmp1
+                self.Reload()
                 self.SaveChange()
                 break
             if self.CreateNewWindow.ReturnData == '0':
