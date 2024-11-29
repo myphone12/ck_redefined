@@ -86,11 +86,11 @@ class main_UI(_UI):
     
     def OneWish(self):
         self.ck.ck()
-        self.WishDataVar.set(str(self.ck))
+        self.Varitems['TextVar'][0].set(str(self.ck))
     
     def TenWish(self):
         self.ck.ck(cishu= 10)
-        self.WishDataVar.set(str(self.ck))
+        self.Varitems['TextVar'][0].set(str(self.ck))
     
     def OpenSettings(self):
         self.SettingsPage = Settings_UI(self.tk)

@@ -28,7 +28,7 @@ class Ck(DataLoading):
     '''
 
     def __init__(self, set='default'):
-        super().__init__()
+        super().__init__(set)
         self.ResultData = []
         self.PrepareCkLoading()
         
@@ -102,9 +102,14 @@ class Ck(DataLoading):
             if self.TimesDB[i][1] >= self.probabilities[i]['BMG'] and self.probabilities[i]['BMG']:
                 self.TimesDB[i] = [0,0]
                 return (i,1)
-            elif self.TimesDB[i][0] >= self.probabilities[i]['SMG'] and self.probabilities[i]['SMG']:
+            elif self.TimesDB[i][0] >= self.probabilities[i]['SMG'] and self.probabilities[i]['SMG'] and self.probabilities[i]['BMG']:
                 self.TimesDB[i][0] = 0
                 return (i,r.choice([0,1]))
+            elif self.TimesDB[i][0] >= self.probabilities[i]['SMG'] and self.probabilities[i]['SMG'] and not self.probabilities[i]['BMG']:
+                self.TimesDB[i][0] = 0
+                return (i, 0)
+            if not self.probabilities[i]['BMG']:
+                self.TimesDB[i][1] = 0
         return 0
 
     def ck(self, cishu = 1, ReturnLevel = 0):
@@ -112,7 +117,12 @@ class Ck(DataLoading):
         if cishu <= 0:
             return None
         for i in range(cishu):
-            self.TimesDB['all'] += 1
+            for i in self.TimesDB:
+                if i == 'all':
+                    self.TimesDB[i] += 1
+                else:
+                    for j in range(len(self.TimesDB[i])):
+                        self.TimesDB[i][j] += 1
             tmp = self.Chouka()
             baodi = self.Baodi()
             if baodi:
@@ -122,7 +132,6 @@ class Ck(DataLoading):
                     continue
                 else:
                     self.TimesDB[baodi[0]][0] = 0
-                    self.TimesDB[baodi[0]][1] += 1
                     result.append(r.choice(self.database[baodi[0]]['main']))
                     continue
             if tmp[1] == 1:
@@ -131,12 +140,9 @@ class Ck(DataLoading):
                 continue
             else:
                 self.TimesDB[tmp[0]][0] = 0
-                self.TimesDB[tmp[0]][1] += 1
                 result.append(r.choice(self.database[tmp[0]]['main']))
                 continue
 
 
         self.ResultData.append(result)
-        if ReturnLevel:
-            return (result)
         return result
