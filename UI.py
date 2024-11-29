@@ -22,7 +22,7 @@ class _UI(DataLoading):
             self.tk = tk.Toplevel(TopLevel)
         else:
             self.tk = tk.Tk()
-        self.tk.iconbitmap('.\\icon.ico')
+        self.tk.iconbitmap('.\\src\\icon.ico')
         self.tk.resizable(0,0)
         screenwidth = self.tk.winfo_screenwidth()
         screenheight = self.tk.winfo_screenheight()
