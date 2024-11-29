@@ -4,14 +4,16 @@ import json
 class DataLoading:
 
     def __init__(self, set = 'default'):
-        self.set = set
+        self.Loadjson(set)
+    
+    def Loadjson(self, set = 'default'):
         with open('.\\database.json', 'r', encoding='utf-8') as file:
             self.data = json.load(file)
-            if self.set in self.data:
-                self.database = self.data[self.set]
+            if set in self.data:
+                self.database = self.data[set]
             else:
                 self.database = self.data['default']
-            self.CurrentData = self.set
+            self.CurrentData = set
 
     def CreateTimeSaveDB(self):
         self.TimesDB = {'all':0}
@@ -46,6 +48,10 @@ class Ck(DataLoading):
     
     def __repr__(self):
         return f'{self.ResultData}'
+    
+    def Reload(self):
+        self.Loadjson()
+        self.PrepareCkLoading()
     
     def PrepareCkLoading(self):
         self.items = {}

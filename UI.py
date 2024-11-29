@@ -9,6 +9,8 @@ import language
 class _UI(DataLoading):
 
     def __init__(self, TopLevel = False, dataload = False):
+        self.isopen = True
+        self.dataloadflag = dataload
         if dataload:
             super().__init__(dataload)
         self.lang = language.language()
@@ -30,8 +32,13 @@ class _UI(DataLoading):
         height = self.tk.winfo_height()
         size = '+%d+%d' % ((screenwidth - width)/2, (screenheight - height)/2)
         self.tk.geometry(size)
+        self.tk.protocol("WM_DELETE_WINDOW", self._close)
         self.items = {'Text': [], 'Entry': [], 'Checkbox': [], 'Button': []}
         self.Varitems = {'TextVar': [], 'EntryVar': [], 'CheckboxVar': [], 'ButtonVar': []}
+    
+    def _close(self):
+        self.isopen = False
+        self.tk.destroy()
     
     def MenuLoading(self):
         pass
@@ -83,7 +90,26 @@ class main_UI(_UI):
         self.WishDataVar = tk.StringVar()
         self.wish_text2Var = tk.StringVar()
         self.easteregg = 0
+        self.settings_thread = threading.Thread(target=lambda:self._Settingwindowmonitor(), daemon=True)
+        self.settings_thread.start()
     
+    def _Settingwindowmonitor(self):
+        flag = 0
+        while True:
+            sleep(0.1)
+            try:
+                if not self.SettingsPage.isopen:
+                    if flag == 0:
+                        self.Loadjson()
+                        self.ChooseDB('default')
+                        self.ck.Reload()
+                        self.Reload()
+                        flag = 1
+                else:
+                    flag = 0
+            except:
+                pass
+
     def OneWish(self):
         self.ck.ck()
         self.Varitems['TextVar'][0].set(str(self.ck))
@@ -93,8 +119,15 @@ class main_UI(_UI):
         self.Varitems['TextVar'][0].set(str(self.ck))
     
     def OpenSettings(self):
-        self.SettingsPage = Settings_UI(self.tk)
-        self.SettingsPage.PrepareUILoading()
+        try:
+            if not self.SettingsPage.isopen:
+                self.SettingsPage = Settings_UI(self.tk)
+                self.SettingsPage.PrepareUILoading()
+        except AttributeError:
+            self.SettingsPage = Settings_UI(self.tk)
+            self.SettingsPage.PrepareUILoading()
+        except:
+            pass
     
     def ChooseDB(self, data):
         self.ck = Ck(set= data)
@@ -217,14 +250,47 @@ class Settings_UI(_UI):
     
     def delDB(self):
         n = msg.askokcancel(title=self.lang.deletedb, message=self.lang.deletedbmsg)
+        if n:
+            if self.CurrentData == 'default':
+                msg.showerror(self.lang.error, self.lang.nodbdel)
+                return 0
+            tmp = {}
+            for i in self.data:
+                if i == self.CurrentData:
+                    continue
+                else:
+                    tmp[i] = self.data[i]
+            self.data = tmp
+            self.database = tmp['default']
+            self.CurrentData = 'default'
+            self.Reload()
+            self.SaveChange()
 
     def ChangeItemData(self):
-        self.ChangeItemDataWindow = ItemDataSettings_UI(TopLevel= self.tk, data=self.CurrentData)
-        self.ChangeItemDataWindow.PrepareUILoading()
+        try:
+            if not self.ChangeItemDataWindow.isopen:
+                self.ChangeItemDataWindow = ItemDataSettings_UI(TopLevel= self.tk, data=self.CurrentData)
+                self.ChangeItemDataWindow.PrepareUILoading()
+        except AttributeError:
+            self.ChangeItemDataWindow = ItemDataSettings_UI(TopLevel= self.tk, data=self.CurrentData)
+            self.ChangeItemDataWindow.PrepareUILoading()
+        except:
+            pass
 
     def newDB(self):
         self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.newdb)
         self.CreateNewWindow.PrepareUILoading()
+        self.newdb_thread = threading.Thread(target=lambda:self._newDB(), daemon=True)
+        self.newdb_thread.start()
+    
+    def _newDB(self):
+        while True:
+            sleep(0.1)
+            if self.CreateNewWindow.ReturnData != '' and self.CreateNewWindow.ReturnData != '0':
+                self.data[self.CreateNewWindow.ReturnData] = {'sample':{'BMG':[], 'main':[]}, 'data':{'sample':{'probability':'1','SMG':'0', 'BMG':'0'}}}
+                self.Reload()
+                self.SaveChange()
+                break
 
     def setLanguage(self,language):
         n = msg.askokcancel(self.lang.chooselang, self.lang.chooselangmsg)
@@ -236,8 +302,8 @@ class Settings_UI(_UI):
     def CreateNew(self):
         self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.newitem)
         self.CreateNewWindow.PrepareUILoading()
-        self.rename_thread = threading.Thread(target=lambda:self._CreateNew(), daemon=True)
-        self.rename_thread.start()
+        self.createnew_thread = threading.Thread(target=lambda:self._CreateNew(), daemon=True)
+        self.createnew_thread.start()
 
     def Del(self, data):
         n = msg.askokcancel(title=self.lang.deleteitem, message=self.lang.deleteitemmsg)
