@@ -332,14 +332,14 @@ class Settings_UI(_UI):
 
     def newDB(self):
         try:
-            if not self.CreateNewWindow.isopen:
-                self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.newdb)
-                self.CreateNewWindow.PrepareUILoading()
+            if not self.CreateNewDBWindow.isopen:
+                self.CreateNewDBWindow = CreateNewWindow(self.tk, self.lang.newdb)
+                self.CreateNewDBWindow.PrepareUILoading()
                 self.newdb_thread = threading.Thread(target=lambda:self._newDB(), daemon=True)
                 self.newdb_thread.start()
         except AttributeError:
-            self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.newdb)
-            self.CreateNewWindow.PrepareUILoading()
+            self.CreateNewDBWindow = CreateNewWindow(self.tk, self.lang.newdb)
+            self.CreateNewDBWindow.PrepareUILoading()
             self.newdb_thread = threading.Thread(target=lambda:self._newDB(), daemon=True)
             self.newdb_thread.start()
         except:
@@ -348,8 +348,8 @@ class Settings_UI(_UI):
     def _newDB(self):
         while True:
             sleep(0.1)
-            if self.CreateNewWindow.ReturnData != '' and self.CreateNewWindow.ReturnData != '0':
-                self.data[self.CreateNewWindow.ReturnData] = {'sample':{'BMG':[], 'main':[]}, 'data':{'sample':{'probability':'1','SMG':'0', 'BMG':'0'}}}
+            if self.CreateNewDBWindow.ReturnData != '' and self.CreateNewDBWindow.ReturnData != '0':
+                self.data[self.CreateNewDBWindow.ReturnData] = {'sample':{'BMG':[], 'main':[]}, 'data':{'sample':{'probability':'1','SMG':'0', 'BMG':'0'}}}
                 self.Reload()
                 self.SaveChange()
                 break
@@ -363,14 +363,14 @@ class Settings_UI(_UI):
 
     def CreateNew(self):
         try:
-            if not self.CreateNewWindow.isopen:
-                self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.newitem)
-                self.CreateNewWindow.PrepareUILoading()
+            if not self.CreateNewItemWindow.isopen:
+                self.CreateNewItemWindow = CreateNewWindow(self.tk, self.lang.newitem)
+                self.CreateNewItemWindow.PrepareUILoading()
                 self.createnew_thread = threading.Thread(target=lambda:self._CreateNew(), daemon=True)
                 self.createnew_thread.start()
         except AttributeError:
-            self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.newitem)
-            self.CreateNewWindow.PrepareUILoading()
+            self.CreateNewItemWindow = CreateNewWindow(self.tk, self.lang.newitem)
+            self.CreateNewItemWindow.PrepareUILoading()
             self.createnew_thread = threading.Thread(target=lambda:self._CreateNew(), daemon=True)
             self.createnew_thread.start()
         except:
@@ -408,14 +408,14 @@ class Settings_UI(_UI):
 
     def Rename(self, data):
         try:
-            if not self.CreateNewWindow.isopen:
-                self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.rename,data)
-                self.CreateNewWindow.PrepareUILoading()
+            if not self.RenameWindow.isopen:
+                self.RenameWindow = CreateNewWindow(self.tk, self.lang.rename,data)
+                self.RenameWindow.PrepareUILoading()
                 self.rename_thread = threading.Thread(target=lambda:self._Rename(data), daemon=True)
                 self.rename_thread.start()
         except AttributeError:
-            self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.rename,data)
-            self.CreateNewWindow.PrepareUILoading()
+            self.RenameWindow = CreateNewWindow(self.tk, self.lang.rename,data)
+            self.RenameWindow.PrepareUILoading()
             self.rename_thread = threading.Thread(target=lambda:self._Rename(data), daemon=True)
             self.rename_thread.start()
         except:
@@ -428,17 +428,17 @@ class Settings_UI(_UI):
         tmp1 = {}
         while True:
             sleep(0.1)
-            if self.CreateNewWindow.ReturnData != '' and self.CreateNewWindow.ReturnData != '0':
+            if self.RenameWindow.ReturnData != '' and self.RenameWindow.ReturnData != '0':
                 for i in self.data[self.CurrentData]:
                     if i == data:
-                        tmp1[self.CreateNewWindow.ReturnData] = self.data[self.CurrentData][i]
+                        tmp1[self.RenameWindow.ReturnData] = self.data[self.CurrentData][i]
                     elif i == 'data':
                         continue
                     else:
                         tmp1[i] = self.data[self.CurrentData][i]
                 for i in self.data[self.CurrentData]['data']:
                     if i == data:
-                        tmp[self.CreateNewWindow.ReturnData] = self.data[self.CurrentData]['data'][i]
+                        tmp[self.RenameWindow.ReturnData] = self.data[self.CurrentData]['data'][i]
                     else:
                         tmp[i] = self.data[self.CurrentData]['data'][i]
                 tmp1['data'] = tmp
@@ -450,10 +450,10 @@ class Settings_UI(_UI):
                         tmp[i] = self.data[i]
                 self.data = tmp
                 self.database = tmp1
-                self.CreateNewWindow.ReturnData = ''
+                self.RenameWindow.ReturnData = ''
                 self.SaveChange()
                 break
-            if self.CreateNewWindow.ReturnData == '0':
+            if self.RenameWindow.ReturnData == '0':
                 break
 
     def _CreateNew(self):
@@ -461,15 +461,15 @@ class Settings_UI(_UI):
         tmp1 = {}
         while True:
             sleep(0.1)
-            if self.CreateNewWindow.ReturnData != '' and self.CreateNewWindow.ReturnData != '0':
+            if self.CreateNewItemWindow.ReturnData != '' and self.CreateNewItemWindow.ReturnData != '0':
                 for i in self.data[self.CurrentData]:
                     if i == 'data':
                         continue
                     tmp1[i] = self.data[self.CurrentData][i]
-                tmp1[self.CreateNewWindow.ReturnData] = {'BMG':[], 'main':[] }
+                tmp1[self.CreateNewItemWindow.ReturnData] = {'BMG':[], 'main':[] }
                 for i in self.data[self.CurrentData]['data']:
                     tmp[i] = self.data[self.CurrentData]['data'][i]
-                tmp[self.CreateNewWindow.ReturnData] = {'probability': '1', 'SMG': '0', 'BMG': '0'}
+                tmp[self.CreateNewItemWindow.ReturnData] = {'probability': '1', 'SMG': '0', 'BMG': '0'}
                 tmp1['data'] = tmp
                 tmp = {}
                 for i in self.data:
@@ -482,7 +482,7 @@ class Settings_UI(_UI):
                 self.Reload()
                 self.SaveChange()
                 break
-            if self.CreateNewWindow.ReturnData == '0':
+            if self.CreateNewItemWindow.ReturnData == '0':
                 break
     
     def About(self):
@@ -561,12 +561,16 @@ class CreateNewWindow(_UI):
         self.ReturnData = ''
     
     def Save(self):
-        self.ReturnData = self.Varitems['TextVar'][-1].get()
-        self.tk.destroy()
+        if self.Varitems['TextVar'][-1].get():
+            self.ReturnData = self.Varitems['TextVar'][-1].get()
+            self._close()
+        else:
+            msg.showerror(self.lang.error, self.lang.inputname)
+        
     
     def Cancel(self):
         self.ReturnData = '0'
-        self.tk.destroy()
+        self._close()
 
     def TextLoading(self):
         self.items['Text'].append(ttk.Label(self.tk, text=self.lang.setname))
@@ -594,7 +598,7 @@ class Player(_UI):
         self.finish = 0
 
     def on_closing(self):
-        self.tk.destroy()
+        self._close()
         self.finish = 1
         sys.exit()
 
@@ -652,7 +656,7 @@ class ItemDataSettings_UI(_UI):
         
         with open('.\\database.json', 'w+', encoding='utf-8') as file:
             file.write(json.dumps(self.data, ensure_ascii=False, indent=4))
-        self.tk.destroy()
+        self._close()
 
     def TextLoading(self):
         tmp = 0
@@ -681,5 +685,5 @@ class ItemDataSettings_UI(_UI):
     def ButtonLoading(self):
         self.items['Button'].append(ttk.Button(self.tk, text=self.lang.save, width=80, command=self.Save))
         self.items['Button'][-1].grid(row=self.finalcolumn + 1, column=0, columnspan=2, padx=20, pady=10)
-        self.items['Button'].append(ttk.Button(self.tk, text=self.lang.cancel, width=80, command=self.tk.destroy))
+        self.items['Button'].append(ttk.Button(self.tk, text=self.lang.cancel, width=80, command=self._close))
         self.items['Button'][-1].grid(row=self.finalcolumn + 2, column=0, columnspan=2, padx=20, pady=10)

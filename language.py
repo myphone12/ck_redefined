@@ -44,6 +44,7 @@ class language:
         self.probabilityerror = '概率值请输入0~1之间的数字！'
         self.mgerror = '保底应为大于0的整数！'
         self.nodbdel = '禁止删除初始数据库！'
+        self.inputname = '请输入名称！'
 
     def en_US(self):
         self.title = 'Wish stimulator'
@@ -86,3 +87,4 @@ class language:
         self.probabilityerror = 'Please enter a number between 0 and 1 for the probability value!'
         self.mgerror = 'The minimum guarantee should be an integer greater than 0!'
         self.nodbdel = 'Prohibit deleting the initial database!'
+        self.inputname = 'Please enter a name!'
