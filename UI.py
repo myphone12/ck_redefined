@@ -10,6 +10,8 @@ class _UI(DataLoading):
 
     def __init__(self, TopLevel = False, dataload = False):
         self.isopen = True
+        self.drag_start_x = None
+        self.drag_start_y = None
         self.dataloadflag = dataload
         if dataload:
             super().__init__(dataload)
@@ -33,9 +35,25 @@ class _UI(DataLoading):
         size = '+%d+%d' % ((screenwidth - width)/2, (screenheight - height)/2)
         self.tk.geometry(size)
         self.tk.protocol("WM_DELETE_WINDOW", self._close)
+        self.tk.bind('<ButtonPress-1>', self.on_drag_start)
+        self.tk.bind('<B1-Motion>', self.on_drag_motion)
+        self.tk.bind('<ButtonRelease-1>', self.on_drag_release)
         self.items = {'Text': [], 'Entry': [], 'Checkbox': [], 'Button': []}
         self.Varitems = {'TextVar': [], 'EntryVar': [], 'CheckboxVar': [], 'ButtonVar': []}
     
+    def on_drag_start(self, event):
+        self.drag_start_x = event.x
+        self.drag_start_y = event.y
+ 
+    def on_drag_motion(self, event):
+        x = self.tk.winfo_x() - self.drag_start_x + event.x
+        y = self.tk.winfo_y() - self.drag_start_y + event.y
+        self.tk.geometry('+{0}+{1}'.format(x, y))
+ 
+    def on_drag_release(self, event):
+        self.drag_start_x = None
+        self.drag_start_y = None
+
     def _close(self):
         self.isopen = False
         self.tk.destroy()
@@ -51,6 +69,10 @@ class _UI(DataLoading):
         ydistance = speed
         while True:
             try:
+                sleep(0.01)
+                if self.drag_start_x:
+                    sleep(0.1)
+                    continue
                 x += xdistance
                 y += int(ydistance*math.tan(agnle))
                 self.tk.geometry(f'+{x}+{y}')
