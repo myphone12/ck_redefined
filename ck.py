@@ -348,7 +348,7 @@ if old_:
 
 qy=tk.Tk()
 qy.title('原神抽卡模拟器v2.1.1')
-qy.iconbitmap('.\\icon.ico')
+qy.iconbitmap('.\\src\\icon.ico')
 qy.resizable(0, 0)
 
 p1=tk.Label(qy, text='五星:', anchor='n', font=("Microsoft Yahei UI", 9))

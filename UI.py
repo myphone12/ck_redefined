@@ -324,11 +324,23 @@ class Settings_UI(_UI):
             if not self.ChangeItemDataWindow.isopen:
                 self.ChangeItemDataWindow = ItemDataSettings_UI(TopLevel= self.tk, data=self.CurrentData)
                 self.ChangeItemDataWindow.PrepareUILoading()
+                self.changeitemdata_thread = threading.Thread(target=lambda:self._ChangeItemData(), daemon=True)
+                self.changeitemdata_thread.start()
         except AttributeError:
             self.ChangeItemDataWindow = ItemDataSettings_UI(TopLevel= self.tk, data=self.CurrentData)
             self.ChangeItemDataWindow.PrepareUILoading()
         except:
             pass
+
+    def _ChangeItemData(self):
+        while True:
+            sleep(0.1)
+            if self.ChangeItemDataWindow.ReturnData != '' and self.ChangeItemDataWindow.ReturnData != '0':
+                self.Reload()
+                self.SaveChange()
+                break
+            if self.ChangeItemDataWindow.ReturnData == '0':
+                break
 
     def newDB(self):
         try:
@@ -352,6 +364,8 @@ class Settings_UI(_UI):
                 self.data[self.CreateNewDBWindow.ReturnData] = {'sample':{'BMG':[], 'main':[]}, 'data':{'sample':{'probability':'1','SMG':'0', 'BMG':'0'}}}
                 self.Reload()
                 self.SaveChange()
+                break
+            if self.CreateNewDBWindow.ReturnData == '0':
                 break
 
     def setLanguage(self,language):
@@ -622,7 +636,7 @@ class Player(_UI):
             imgtk = ImageTk.PhotoImage(image=img)
             self.label.imgtk = imgtk  
             self.label.configure(image=imgtk)
-            self.label.after(10, self.update_frame)
+            self.label.after(5, self.update_frame)
         else:
             self.cap.release()
             self.finish = 1
@@ -645,6 +659,7 @@ class ItemDataSettings_UI(_UI):
         super().__init__(TopLevel, dataload = data)
 
         self.tk.title(self.lang.setitemdata)
+        self.ReturnData = ''
     
     def Save(self):
         tmp = 0
@@ -656,6 +671,11 @@ class ItemDataSettings_UI(_UI):
         
         with open('.\\database.json', 'w+', encoding='utf-8') as file:
             file.write(json.dumps(self.data, ensure_ascii=False, indent=4))
+        self.ReturnData = '1'
+        self._close()
+    
+    def Cancel(self):
+        self.ReturnData = '0'
         self._close()
 
     def TextLoading(self):
@@ -685,5 +705,5 @@ class ItemDataSettings_UI(_UI):
     def ButtonLoading(self):
         self.items['Button'].append(ttk.Button(self.tk, text=self.lang.save, width=80, command=self.Save))
         self.items['Button'][-1].grid(row=self.finalcolumn + 1, column=0, columnspan=2, padx=20, pady=10)
-        self.items['Button'].append(ttk.Button(self.tk, text=self.lang.cancel, width=80, command=self._close))
+        self.items['Button'].append(ttk.Button(self.tk, text=self.lang.cancel, width=80, command=self.Cancel))
         self.items['Button'][-1].grid(row=self.finalcolumn + 2, column=0, columnspan=2, padx=20, pady=10)
