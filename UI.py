@@ -255,6 +255,8 @@ class Settings_UI(_UI):
     def __init__(self, TopLevel = False):
         super().__init__(TopLevel, dataload = 'default')
         self.tk.title(self.lang.settings)
+        self.isdel = 0
+        self.isdeldb = 0
 
     def SaveChange(self):
         tmp = list(range(len(self.Varitems['EntryVar'])))
@@ -302,6 +304,9 @@ class Settings_UI(_UI):
         self.Reload()
     
     def delDB(self):
+        if self.isdeldb == 1:
+            return 0
+        self.isdeldb = 1
         n = msg.askokcancel(title=self.lang.deletedb, message=self.lang.deletedbmsg)
         if n:
             if self.CurrentData == 'default':
@@ -318,6 +323,7 @@ class Settings_UI(_UI):
             self.CurrentData = 'default'
             self.Reload()
             self.SaveChange()
+        self.isdeldb = 0
 
     def ChangeItemData(self):
         try:
@@ -338,6 +344,7 @@ class Settings_UI(_UI):
         while True:
             sleep(0.1)
             if self.ChangeItemDataWindow.ReturnData != '' and self.ChangeItemDataWindow.ReturnData != '0':
+                self.Loadjson()
                 self.Reload()
                 self.SaveChange()
                 break
@@ -394,6 +401,9 @@ class Settings_UI(_UI):
         
 
     def Del(self, data):
+        if self.isdel == 1:
+            return 0
+        self.isdel = 1
         n = msg.askokcancel(title=self.lang.deleteitem, message=self.lang.deleteitemmsg)
         if n and len(self.data[self.CurrentData]['data']) > 1:
             tmp = {}
@@ -421,6 +431,7 @@ class Settings_UI(_UI):
             self.SaveChange()
         elif len(self.data[self.CurrentData]['data']) <= 1:
             msg.showerror(self.lang.option,self.lang.optionmsg)
+        self.isdel = 0
 
     def Rename(self, data):
         try:
