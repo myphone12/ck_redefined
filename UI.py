@@ -331,10 +331,19 @@ class Settings_UI(_UI):
             pass
 
     def newDB(self):
-        self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.newdb)
-        self.CreateNewWindow.PrepareUILoading()
-        self.newdb_thread = threading.Thread(target=lambda:self._newDB(), daemon=True)
-        self.newdb_thread.start()
+        try:
+            if not self.CreateNewWindow.isopen:
+                self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.newdb)
+                self.CreateNewWindow.PrepareUILoading()
+                self.newdb_thread = threading.Thread(target=lambda:self._newDB(), daemon=True)
+                self.newdb_thread.start()
+        except AttributeError:
+            self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.newdb)
+            self.CreateNewWindow.PrepareUILoading()
+            self.newdb_thread = threading.Thread(target=lambda:self._newDB(), daemon=True)
+            self.newdb_thread.start()
+        except:
+            pass
     
     def _newDB(self):
         while True:
@@ -353,10 +362,20 @@ class Settings_UI(_UI):
             sys.exit()
 
     def CreateNew(self):
-        self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.newitem)
-        self.CreateNewWindow.PrepareUILoading()
-        self.createnew_thread = threading.Thread(target=lambda:self._CreateNew(), daemon=True)
-        self.createnew_thread.start()
+        try:
+            if not self.CreateNewWindow.isopen:
+                self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.newitem)
+                self.CreateNewWindow.PrepareUILoading()
+                self.createnew_thread = threading.Thread(target=lambda:self._CreateNew(), daemon=True)
+                self.createnew_thread.start()
+        except AttributeError:
+            self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.newitem)
+            self.CreateNewWindow.PrepareUILoading()
+            self.createnew_thread = threading.Thread(target=lambda:self._CreateNew(), daemon=True)
+            self.createnew_thread.start()
+        except:
+            pass
+        
 
     def Del(self, data):
         n = msg.askokcancel(title=self.lang.deleteitem, message=self.lang.deleteitemmsg)
@@ -388,10 +407,20 @@ class Settings_UI(_UI):
             msg.showerror(self.lang.option,self.lang.optionmsg)
 
     def Rename(self, data):
-        self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.rename,data)
-        self.CreateNewWindow.PrepareUILoading()
-        self.rename_thread = threading.Thread(target=lambda:self._Rename(data), daemon=True)
-        self.rename_thread.start()
+        try:
+            if not self.CreateNewWindow.isopen:
+                self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.rename,data)
+                self.CreateNewWindow.PrepareUILoading()
+                self.rename_thread = threading.Thread(target=lambda:self._Rename(data), daemon=True)
+                self.rename_thread.start()
+        except AttributeError:
+            self.CreateNewWindow = CreateNewWindow(self.tk, self.lang.rename,data)
+            self.CreateNewWindow.PrepareUILoading()
+            self.rename_thread = threading.Thread(target=lambda:self._Rename(data), daemon=True)
+            self.rename_thread.start()
+        except:
+            pass
+        
         
         
     def _Rename(self, data):
