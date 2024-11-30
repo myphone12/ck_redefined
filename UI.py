@@ -329,6 +329,8 @@ class Settings_UI(_UI):
         except AttributeError:
             self.ChangeItemDataWindow = ItemDataSettings_UI(TopLevel= self.tk, data=self.CurrentData)
             self.ChangeItemDataWindow.PrepareUILoading()
+            self.changeitemdata_thread = threading.Thread(target=lambda:self._ChangeItemData(), daemon=True)
+            self.changeitemdata_thread.start()
         except:
             pass
 
