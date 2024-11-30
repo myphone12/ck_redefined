@@ -144,5 +144,18 @@
                 "BMG": "0"
             }
         }
+    },
+    "233": {
+        "sample": {
+            "BMG": [],
+            "main": []
+        },
+        "data": {
+            "sample": {
+                "probability": "1",
+                "SMG": "0",
+                "BMG": "0"
+            }
+        }
     }
 }

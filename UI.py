@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox as msg
 from time import sleep
 from PIL import Image, ImageTk
-import threading, json, winsound, random, cv2, webbrowser,sys
+import threading, json, winsound, random, cv2, webbrowser,sys, math
 from reck import Ck, DataLoading
 import language
 
@@ -39,6 +39,30 @@ class _UI(DataLoading):
     def _close(self):
         self.isopen = False
         self.tk.destroy()
+    
+    def Move(self, speed = 2, agnle = math.pi/4):
+        self.move_thread = threading.Thread(target=lambda:self._Move(speed, agnle), daemon=True)
+        self.move_thread.start()
+    
+    def _Move(self, speed, agnle):
+        x = 0
+        y = 0
+        xdistance = speed
+        ydistance = speed
+        while True:
+            try:
+                x += xdistance
+                y += int(ydistance*math.tan(agnle))
+                self.tk.geometry(f'+{x}+{y}')
+                self.tk.update()
+                if self.tk.winfo_x() >= self.tk.winfo_screenwidth() - self.tk.winfo_width() or self.tk.winfo_x() <= 0:
+                    xdistance = -xdistance
+                if self.tk.winfo_y() >= self.tk.winfo_screenheight() - self.tk.winfo_height() or self.tk.winfo_y() <= 0:
+                    ydistance = -ydistance
+                if not self.isopen:
+                    break
+            except:
+                break
     
     def MenuLoading(self):
         pass
@@ -138,17 +162,24 @@ class main_UI(_UI):
             self.easteregg = 1
             match random.choice([0, 1, 2]):
                 case 0:
-                    self.wish_text2 = tk.Label(self.tk, textvariable=self.wish_text2Var, 
+                    self.text2 = tk.Label(self.tk, textvariable=self.wish_text2Var, 
                                     font=('Microsoft Yahei UI', 9))
-                    self.wish_text2.grid(row=2, column=0, columnspan=2, pady=10)
-                    self.wish_text2_threading = threading.Thread(target=self._TextVar1, daemon=True)
-                    self.wish_text2_threading.start()
+                    self.text2.grid(row=2, column=0, columnspan=2, pady=10)
+                    self.text2_threading = threading.Thread(target=self._TextVar1, daemon=True)
+                    self.text2_threading.start()
                     self.tk.update()
                 case 1:
                     self.video = Player(self.tk, '.\\src\\sddl.mp4', self.lang.sddl)
                     self.video.PrepareUILoading()
-                    self.wish_text2_threading = threading.Thread(target=self._video1, daemon=True)
-                    self.wish_text2_threading.start()
+                    self.sddlvideo_threading = threading.Thread(target=self._video1, daemon=True)
+                    self.sddlvideo_threading.start()
+                    self.Move(random.randint(1,10),random.random()*(math.pi/2))
+                    self.video.Move(random.randint(1,10),random.random()*(math.pi/2))
+                    try:
+                        if self.SettingsPage:
+                            self.SettingsPage.Move(random.randint(1,10),random.random()*(math.pi/2))
+                    except:
+                        pass
                 case 2:
                     webbrowser.open('https://www.bilibili.com/video/BV1GJ411x7h7/')
     
@@ -536,12 +567,12 @@ class Player(_UI):
             imgtk = ImageTk.PhotoImage(image=img)
             self.label.imgtk = imgtk  
             self.label.configure(image=imgtk)
-            self.label.after(5, self.update_frame)
+            self.label.after(10, self.update_frame)
         else:
             self.cap.release()
             self.finish = 1
             self.tk.destroy()
-    
+
     def TextLoading(self):
         self.label = ttk.Label(self.tk)
         self.label.grid(padx=10, pady=10)
