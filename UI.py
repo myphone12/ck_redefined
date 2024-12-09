@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox as msg
 from time import sleep
 from PIL import Image, ImageTk
-import threading, json, winsound, random, cv2, webbrowser,sys, math, ctypes
+import threading, json, winsound, random, cv2, webbrowser, sys, math, ctypes
 from reck import Ck, DataLoading
 import language
 
