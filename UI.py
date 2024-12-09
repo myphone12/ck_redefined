@@ -2,13 +2,14 @@ import tkinter as tk
 from tkinter import ttk, messagebox as msg
 from time import sleep
 from PIL import Image, ImageTk
-import threading, json, winsound, random, cv2, webbrowser,sys, math
+import threading, json, winsound, random, cv2, webbrowser,sys, math, ctypes
 from reck import Ck, DataLoading
 import language
 
 class _UI(DataLoading):
 
     def __init__(self, TopLevel = False, dataload = False):
+        ctypes.windll.shcore.SetProcessDpiAwareness(1)
         self.isopen = True
         self.drag_start_x = None
         self.drag_start_y = None
