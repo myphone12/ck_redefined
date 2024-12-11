@@ -64,8 +64,8 @@ class _UI(DataLoading):
         self.move_thread.start()
     
     def _Move(self, speed, agnle):
-        x = 0
-        y = 0
+        x = self.tk.winfo_x()
+        y = self.tk.winfo_y()
         xdistance = speed
         ydistance = speed
         while True:
@@ -257,6 +257,7 @@ class Settings_UI(_UI):
         super().__init__(TopLevel, dataload = 'default')
         self.tk.title(self.lang.settings)
         self.isdel = 0
+        self.about_isopen = 0
         self.isdeldb = 0
 
     def SaveChange(self):
@@ -312,6 +313,7 @@ class Settings_UI(_UI):
         if n:
             if self.CurrentData == 'default':
                 msg.showerror(self.lang.error, self.lang.nodbdel)
+                self.isdeldb = 0
                 return 0
             tmp = {}
             for i in self.data:
@@ -430,7 +432,7 @@ class Settings_UI(_UI):
             self.database = tmp1
             self.Reload()
             self.SaveChange()
-        elif len(self.data[self.CurrentData]['data']) <= 1:
+        elif n and len(self.data[self.CurrentData]['data']) <= 1:
             msg.showerror(self.lang.option,self.lang.optionmsg)
         self.isdel = 0
 
@@ -514,7 +516,11 @@ class Settings_UI(_UI):
                 break
     
     def About(self):
+        if self.about_isopen == 1:
+            return 0
+        self.about_isopen = 1
         msg.showinfo(self.lang.about,self.lang.aboutmsg)
+        self.about_isopen = 0
 
     def TextLoading(self):
         for i in range(len(self.database['data'])):
@@ -650,7 +656,7 @@ class Player(_UI):
             imgtk = ImageTk.PhotoImage(image=img)
             self.label.imgtk = imgtk  
             self.label.configure(image=imgtk)
-            self.label.after(5, self.update_frame)
+            self.label.after(10, self.update_frame)
         else:
             self.cap.release()
             self.finish = 1
