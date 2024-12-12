@@ -164,6 +164,7 @@ class main_UI(_UI):
         self.Varitems['TextVar'][0].set(str(self.ck))
         tmp1 += tmp[0][0] + ', '
         self.Varitems['TextVar'][l.index(tmp[0][1])+1].set(tmp1)
+        self.Varitems['TextVar'][-1].set(self.ck.TimesDB['all'])
 
     
     def TenWish(self):
@@ -177,6 +178,7 @@ class main_UI(_UI):
             tmp1[l.index(i[1])] += i[0] + ', '
         for i in range(len(l)):
             tmp1.append(self.Varitems['TextVar'][i+1].set(tmp1[i]))
+        self.Varitems['TextVar'][-1].set(self.ck.TimesDB['all'])
 
     
     def OpenSettings(self):
@@ -202,7 +204,7 @@ class main_UI(_UI):
                 case 0:
                     self.text2 = tk.Label(self.tk, textvariable=self.wish_text2Var, 
                                     font=('Microsoft Yahei UI', 9))
-                    self.text2.grid(row=2, column=0, columnspan=2, pady=10)
+                    self.text2.grid(row=len(self.ck.database['data'])*2 + 2, column=2, columnspan=2, pady=10)
                     self.text2_threading = threading.Thread(target=self._TextVar1, daemon=True)
                     self.text2_threading.start()
                     self.tk.update()
@@ -275,6 +277,9 @@ class main_UI(_UI):
                                 font=("Microsoft Yahei UI", 9),fg='orange', 
                                 wraplength=500, relief='sunken'))
             self.items['Text'][-1].grid(row=i+1, column=1, columnspan=3, padx=20, pady=10)
+        self.Varitems['TextVar'].append(tk.StringVar())
+        self.items['Text'].append(tk.Label(self.tk, textvariable = self.Varitems['TextVar'][-1]))
+        self.items['Text'][-1].grid(row=len(self.ck.database['data'])*2 + 2, column=0,columnspan=4, padx=5, pady=5)
             
 
     

@@ -19,7 +19,7 @@ class DataLoading:
         self.TimesDB = {'all':0}
         for i in self.database:
             if i != 'data':
-                self.TimesDB[i] = [0,0]
+                self.TimesDB[i] = [0,0,0]
 
 class Ck(DataLoading):
 
@@ -107,7 +107,7 @@ class Ck(DataLoading):
             if i == 'all':
                 continue
             if self.TimesDB[i][1] >= self.probabilities[i]['BMG'] and self.probabilities[i]['BMG']:
-                self.TimesDB[i] = [0,0]
+                self.TimesDB[i] = [0,0,0]
                 return (i,1)
             elif self.TimesDB[i][0] >= self.probabilities[i]['SMG'] and self.probabilities[i]['SMG'] and self.probabilities[i]['BMG']:
                 self.TimesDB[i][0] = 0
@@ -129,28 +129,38 @@ class Ck(DataLoading):
                 if i == 'all':
                     self.TimesDB[i] += 1
                 else:
-                    for j in range(len(self.TimesDB[i])):
+                    for j in range(len(self.TimesDB[i]) - 1):
                         self.TimesDB[i][j] += 1
             tmp = self.Chouka()
             baodi = self.Baodi()
             if baodi:
                 if baodi[1] == 1:
-                    self.TimesDB[baodi[0]] = [1,1]
+                    self.TimesDB[baodi[0]] = [1,1,0]
                     result.append(r.choice(self.database[baodi[0]]['BMG']))
                     result1.append((result[-1],baodi[0]))
                     continue
                 else:
-                    self.TimesDB[baodi[0]][0] = 0
+                    if self.probabilities[baodi[0]]['BMG'] and self.TimesDB[baodi[0]][-1] == 1:
+                        self.TimesDB[baodi[0]] = [1,1,0]
+                        result.append(r.choice(self.database[baodi[0]]['BMG']))
+                        result1.append((result[-1],baodi[0]))
+                        continue
+                    self.TimesDB[baodi[0]] = [1,1,1]
                     result.append(r.choice(self.database[baodi[0]]['main']))
                     result1.append((result[-1],baodi[0]))
                     continue
             if tmp[1] == 1:
-                self.TimesDB[tmp[0]] = [1,1]
+                self.TimesDB[tmp[0]] = [1,1,0]
                 result.append(r.choice(self.database[tmp[0]]['BMG']))
                 result1.append((result[-1],tmp[0]))
                 continue
             else:
-                self.TimesDB[tmp[0]][0] = 0
+                if self.probabilities[tmp[0]]['BMG'] and self.TimesDB[tmp[0]][-1] == 1:
+                    self.TimesDB[tmp[0]] = [1,1,0]
+                    result.append(r.choice(self.database[tmp[0]]['BMG']))
+                    result1.append((result[-1],tmp[0]))
+                    continue
+                self.TimesDB[tmp[0]] = [1,1,1]
                 result.append(r.choice(self.database[tmp[0]]['main']))
                 result1.append((result[-1],tmp[0]))
                 continue
