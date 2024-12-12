@@ -158,12 +158,26 @@ class main_UI(_UI):
                 pass
 
     def OneWish(self):
-        self.ck.ck()
+        tmp = self.ck.ck()
+        l = list(self.ck.database['data'].keys())
+        tmp1 = self.Varitems['TextVar'][l.index(tmp[0][1])+1].get()
         self.Varitems['TextVar'][0].set(str(self.ck))
+        tmp1 += tmp[0][0] + ', '
+        self.Varitems['TextVar'][l.index(tmp[0][1])+1].set(tmp1)
+
     
     def TenWish(self):
-        self.ck.ck(cishu= 10)
+        tmp = self.ck.ck(cishu= 10)
+        l = list(self.ck.database['data'].keys())
+        tmp1 = []
+        for i in range(len(l)):
+            tmp1.append(self.Varitems['TextVar'][i+1].get())
         self.Varitems['TextVar'][0].set(str(self.ck))
+        for i in tmp:
+            tmp1[l.index(i[1])] += i[0] + ', '
+        for i in range(len(l)):
+            tmp1.append(self.Varitems['TextVar'][i+1].set(tmp1[i]))
+
     
     def OpenSettings(self):
         try:
@@ -178,6 +192,7 @@ class main_UI(_UI):
     
     def ChooseDB(self, data):
         self.ck = Ck(set= data)
+        self.Reload()
     
     def EasterEgg(self):
         if not self.easteregg:
@@ -238,10 +253,11 @@ class main_UI(_UI):
         self.tk.config(menu=self.wish_mainmenu)
     
     def ButtonLoading(self):
+        tmp = len(self.ck.database['data'])*2 + 1
         self.items['Button'].append(ttk.Button(self.tk, text=self.lang.onewish, width=10, command=self.OneWish))
-        self.items['Button'][-1].grid(row=1, column=0, padx=20, pady=10)
+        self.items['Button'][-1].grid(row=tmp, column=0, columnspan=2, padx=20, pady=10)
         self.items['Button'].append(ttk.Button(self.tk, text=self.lang.tenwish, width=10, command=self.TenWish))
-        self.items['Button'][-1].grid(row=1, column=1, padx=20, pady=10)
+        self.items['Button'][-1].grid(row=tmp, column=2, columnspan=2, padx=20, pady=10)
 
     def TextLoading(self):
         self.Varitems['TextVar'].append(tk.StringVar())
@@ -249,7 +265,18 @@ class main_UI(_UI):
                             textvariable = self.Varitems['TextVar'][-1], anchor='s', 
                             font=("Microsoft Yahei UI", 9),fg='orange', 
                             wraplength=500, relief='sunken'))
-        self.items['Text'][-1].grid(row=0, column=0, columnspan=2, padx=20, pady=10)
+        self.items['Text'][-1].grid(row=0, column=0, columnspan=4, padx=20, pady=10)
+        for i in range(len(self.ck.database['data'])):
+            self.items['Text'].append(tk.Label(self.tk, text=list(self.ck.database['data'].keys())[i] + ' :'))
+            self.items['Text'][-1].grid(row=i+1, column=0, padx=5, pady=5)
+            self.Varitems['TextVar'].append(tk.StringVar())
+            self.items['Text'].append(tk.Label(self.tk, width=60, height=3, 
+                                textvariable = self.Varitems['TextVar'][-1], anchor='s', 
+                                font=("Microsoft Yahei UI", 9),fg='orange', 
+                                wraplength=500, relief='sunken'))
+            self.items['Text'][-1].grid(row=i+1, column=1, columnspan=3, padx=20, pady=10)
+            
+
     
 class Settings_UI(_UI):
 

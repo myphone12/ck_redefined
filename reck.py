@@ -32,6 +32,7 @@ class Ck(DataLoading):
     def __init__(self, set='default'):
         super().__init__(set)
         self.ResultData = []
+        self.ReturnDeatils = True
         self.PrepareCkLoading()
         
     
@@ -120,6 +121,7 @@ class Ck(DataLoading):
 
     def ck(self, cishu = 1, ReturnLevel = 0):
         result = []
+        result1 = []
         if cishu <= 0:
             return None
         for i in range(cishu):
@@ -135,20 +137,26 @@ class Ck(DataLoading):
                 if baodi[1] == 1:
                     self.TimesDB[baodi[0]] = [1,1]
                     result.append(r.choice(self.database[baodi[0]]['BMG']))
+                    result1.append((result[-1],baodi[0]))
                     continue
                 else:
                     self.TimesDB[baodi[0]][0] = 0
                     result.append(r.choice(self.database[baodi[0]]['main']))
+                    result1.append((result[-1],baodi[0]))
                     continue
             if tmp[1] == 1:
                 self.TimesDB[tmp[0]] = [1,1]
                 result.append(r.choice(self.database[tmp[0]]['BMG']))
+                result1.append((result[-1],tmp[0]))
                 continue
             else:
                 self.TimesDB[tmp[0]][0] = 0
                 result.append(r.choice(self.database[tmp[0]]['main']))
+                result1.append((result[-1],tmp[0]))
                 continue
 
 
         self.ResultData.append(result)
+        if self.ReturnDeatils:
+            return result1
         return result
