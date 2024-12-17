@@ -36,9 +36,11 @@ class _UI(DataLoading):
         size = '+%d+%d' % ((screenwidth - width)/2, (screenheight - height)/2)
         self.tk.geometry(size)
         self.tk.protocol("WM_DELETE_WINDOW", self._close)
-        self.tk.bind('<ButtonPress-1>', self.on_drag_start)
-        self.tk.bind('<B1-Motion>', self.on_drag_motion)
-        self.tk.bind('<ButtonRelease-1>', self.on_drag_release)
+        self.mover = tk.Frame(self.tk, width=2000, height=2000)
+        self.mover.place(x=0,y=0)
+        self.mover.bind('<ButtonPress-1>', self.on_drag_start)
+        self.mover.bind('<B1-Motion>', self.on_drag_motion)
+        self.mover.bind('<ButtonRelease-1>', self.on_drag_release)
         self.items = {'Text': [], 'Entry': [], 'Checkbox': [], 'Button': []}
         self.Varitems = {'TextVar': [], 'EntryVar': [], 'CheckboxVar': [], 'ButtonVar': []}
     
@@ -115,7 +117,6 @@ class _UI(DataLoading):
         self.Destroy()
         self.PrepareUILoading()
         self.tk.update()
-
 
     def PrepareUILoading(self):
         self.MenuLoading()
@@ -249,9 +250,9 @@ class main_UI(_UI):
         self.wish_menu1 = tk.Menu(self.wish_mainmenu, tearoff=False)
         for i in self.data.keys():
             self.wish_menu1.add_command(label=i, command=lambda data=i:self.ChooseDB(data))
-        self.wish_mainmenu.add_cascade(label=self.lang.choosedb, menu=self.wish_menu1)
-        self.wish_mainmenu.add_command(label=self.lang.settings, command=self.OpenSettings)
-        self.wish_mainmenu.add_command(label='  ', command=self.EasterEgg)
+        self.wish_mainmenu.add_cascade(label=self.lang.choosedb, menu=self.wish_menu1,underline=0)
+        self.wish_mainmenu.add_command(label=self.lang.settings, command=self.OpenSettings,underline=1)
+        self.wish_mainmenu.add_command(label='  ', command=self.EasterEgg,underline=2)
         self.tk.config(menu=self.wish_mainmenu)
     
     def ButtonLoading(self):
@@ -617,6 +618,10 @@ class Settings_UI(_UI):
             self.items['Button'][-1].grid(row=list(self.database['data'].keys()).index(i) + 2, column=6, padx=10)
             self.items['Button'].append(ttk.Button(self.tk, text=self.lang.deleteitem, command=lambda data=i:self.Del(data)))
             self.items['Button'][-1].grid(row=list(self.database['data'].keys()).index(i) + 2, column=7, padx=10)
+        if self.CurrentData == 'default':
+            self.items['Button'][2].configure(state = 'disabled')
+        else:
+            self.items['Button'][2].configure(state = 'normal')
 
 class CreateNewWindow(_UI):
 
