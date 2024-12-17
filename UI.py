@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox as msg
-from time import sleep
 from PIL import Image, ImageTk
-import threading, json, winsound, random, cv2, webbrowser, sys, math, ctypes
+import json, winsound, random, cv2, webbrowser, sys, math, ctypes
 from reck import Ck, DataLoading
 import language
 
@@ -62,20 +61,15 @@ class _UI(DataLoading):
         self.tk.destroy()
     
     def Move(self, speed = 2, agnle = math.pi/4):
-        self.move_thread = threading.Thread(target=lambda:self._Move(speed, agnle), daemon=True)
-        self.move_thread.start()
-    
-    def _Move(self, speed, agnle):
         x = self.tk.winfo_x()
         y = self.tk.winfo_y()
         xdistance = speed
         ydistance = speed
-        while True:
-            try:
-                sleep(0.01)
-                if self.drag_start_x:
-                    sleep(0.1)
-                    continue
+        self.tk.after(10,self._Move,speed,agnle,x,y,xdistance,ydistance)
+    
+    def _Move(self, speed, agnle, x, y, xdistance, ydistance):
+        try:
+            if not self.drag_start_x:  
                 x += xdistance
                 y += int(ydistance*math.tan(agnle))
                 self.tk.geometry(f'+{x}+{y}')
@@ -85,9 +79,10 @@ class _UI(DataLoading):
                 if self.tk.winfo_y() >= self.tk.winfo_screenheight() - self.tk.winfo_height() or self.tk.winfo_y() <= 0:
                     ydistance = -ydistance
                 if not self.isopen:
-                    break
-            except:
-                break
+                    return 1
+        except:
+            pass
+        self.tk.after(10,self._Move,speed,agnle,x,y,xdistance,ydistance)
     
     def MenuLoading(self):
         pass
@@ -138,25 +133,23 @@ class main_UI(_UI):
         self.WishDataVar = tk.StringVar()
         self.wish_text2Var = tk.StringVar()
         self.easteregg = 0
-        self.settings_thread = threading.Thread(target=lambda:self._Settingwindowmonitor(), daemon=True)
-        self.settings_thread.start()
+        self.updateflag = 0
+        self.tk.after(10,self._Settingwindowmonitor)
     
     def _Settingwindowmonitor(self):
-        flag = 0
-        while True:
-            sleep(0.1)
-            try:
-                if not self.SettingsPage.isopen:
-                    if flag == 0:
-                        self.Loadjson()
-                        self.ChooseDB('default')
-                        self.ck.Reload()
-                        self.Reload()
-                        flag = 1
-                else:
-                    flag = 0
-            except:
-                pass
+        try:
+            if not self.SettingsPage.isopen:
+                if self.updateflag == 0:
+                    self.Loadjson()
+                    self.ChooseDB('default')
+                    self.ck.Reload()
+                    self.Reload()
+                    self.updateflag = 1
+            else:
+                self.updateflag = 0
+        except:
+            pass
+        self.tk.after(10,self._Settingwindowmonitor)
 
     def OneWish(self):
         tmp = self.ck.ck()
@@ -206,14 +199,12 @@ class main_UI(_UI):
                     self.text2 = tk.Label(self.tk, textvariable=self.wish_text2Var, 
                                     font=('Microsoft Yahei UI', 9))
                     self.text2.grid(row=len(self.ck.database['data'])*2 + 2, column=2, columnspan=2, pady=10)
-                    self.text2_threading = threading.Thread(target=self._TextVar1, daemon=True)
-                    self.text2_threading.start()
+                    self.tk.after(10,self._TextVar1,0)
                     self.tk.update()
                 case 1:
                     self.video = Player(self.tk, '.\\src\\sddl.mp4', self.lang.sddl)
                     self.video.PrepareUILoading()
-                    self.sddlvideo_threading = threading.Thread(target=self._video1, daemon=True)
-                    self.sddlvideo_threading.start()
+                    self.tk.after(10,self._video1)
                     self.Move(random.randint(1,10),random.random()*(math.pi/2))
                     self.video.Move(random.randint(1,10),random.random()*(math.pi/2))
                     try:
@@ -225,25 +216,29 @@ class main_UI(_UI):
                     webbrowser.open('https://www.bilibili.com/video/BV1GJ411x7h7/')
     
     def _video1(self):
-        while True:
-            sleep(0.1)
-            if self.video.finish == 1:
-                image = Player(self.tk, '.\\src\\wow.mp4', self.lang.wow , '+0+0')
-                image.PrepareUILoading()
-                break
+        if self.video.finish == 1:
+            image = Player(self.tk, '.\\src\\wow.mp4', self.lang.wow , '+0+0')
+            image.PrepareUILoading()
+        else:
+            self.tk.after(10,self._video1)
 
-    def _TextVar1(self):
-        while True:
-            self.wish_text2Var.set('( ^ _ ^ )')
-            sleep(2)
-            self.wish_text2Var.set('( *^▽^* )')
-            sleep(2)
-            self.wish_text2Var.set('ヾ(✿ﾟ▽ﾟ)ノ')
-            sleep(2)
-            self.wish_text2Var.set('(ﾉ≧∀≦)ﾉ')
-            sleep(2)
-            self.wish_text2Var.set('(oﾟ▽ﾟ)o  ')
-            sleep(2)
+    def _TextVar1(self,i):
+            match i:
+                case 0:
+                    self.wish_text2Var.set('( ^ _ ^ )')
+                    self.tk.after(2000,self._TextVar1,1)
+                case 1:
+                    self.wish_text2Var.set('( *^▽^* )')
+                    self.tk.after(2000,self._TextVar1,2)
+                case 2:
+                    self.wish_text2Var.set('ヾ(✿ﾟ▽ﾟ)ノ')
+                    self.tk.after(2000,self._TextVar1,3)
+                case 3:
+                    self.wish_text2Var.set('(ﾉ≧∀≦)ﾉ')
+                    self.tk.after(2000,self._TextVar1,4)
+                case 4:
+                    self.wish_text2Var.set('(oﾟ▽ﾟ)o  ')
+                    self.tk.after(2000,self._TextVar1,0)
 
     def MenuLoading(self):
         self.wish_mainmenu = tk.Menu(self.tk, tearoff=False)
@@ -366,52 +361,47 @@ class Settings_UI(_UI):
             if not self.ChangeItemDataWindow.isopen:
                 self.ChangeItemDataWindow = ItemDataSettings_UI(TopLevel= self.tk, data=self.CurrentData)
                 self.ChangeItemDataWindow.PrepareUILoading()
-                self.changeitemdata_thread = threading.Thread(target=lambda:self._ChangeItemData(), daemon=True)
-                self.changeitemdata_thread.start()
+                self.tk.after(10,self._ChangeItemData)
         except AttributeError:
             self.ChangeItemDataWindow = ItemDataSettings_UI(TopLevel= self.tk, data=self.CurrentData)
             self.ChangeItemDataWindow.PrepareUILoading()
-            self.changeitemdata_thread = threading.Thread(target=lambda:self._ChangeItemData(), daemon=True)
-            self.changeitemdata_thread.start()
+            self.tk.after(10,self._ChangeItemData)
         except:
             pass
 
     def _ChangeItemData(self):
-        while True:
-            sleep(0.1)
-            if self.ChangeItemDataWindow.ReturnData != '' and self.ChangeItemDataWindow.ReturnData != '0':
-                self.Loadjson()
-                self.Reload()
-                self.SaveChange()
-                break
-            if self.ChangeItemDataWindow.ReturnData == '0':
-                break
+        if self.ChangeItemDataWindow.ReturnData != '' and self.ChangeItemDataWindow.ReturnData != '0':
+            self.Loadjson()
+            self.Reload()
+            self.SaveChange()
+        elif self.ChangeItemDataWindow.ReturnData == '0':
+            pass
+        else:
+            self.tk.after(10,self._ChangeItemData)
 
     def newDB(self):
         try:
             if not self.CreateNewDBWindow.isopen:
                 self.CreateNewDBWindow = CreateNewWindow(self.tk, self.lang.newdb)
                 self.CreateNewDBWindow.PrepareUILoading()
-                self.newdb_thread = threading.Thread(target=lambda:self._newDB(), daemon=True)
-                self.newdb_thread.start()
+                self.tk.after(10,self._newDB)
         except AttributeError:
             self.CreateNewDBWindow = CreateNewWindow(self.tk, self.lang.newdb)
             self.CreateNewDBWindow.PrepareUILoading()
-            self.newdb_thread = threading.Thread(target=lambda:self._newDB(), daemon=True)
-            self.newdb_thread.start()
+            self.tk.after(10,self._newDB)
+
         except:
             pass
     
     def _newDB(self):
-        while True:
-            sleep(0.1)
-            if self.CreateNewDBWindow.ReturnData != '' and self.CreateNewDBWindow.ReturnData != '0':
-                self.data[self.CreateNewDBWindow.ReturnData] = {'sample':{'BMG':[], 'main':[]}, 'data':{'sample':{'probability':'1','SMG':'0', 'BMG':'0'}}}
-                self.Reload()
-                self.SaveChange()
-                break
-            if self.CreateNewDBWindow.ReturnData == '0':
-                break
+        if self.CreateNewDBWindow.ReturnData != '' and self.CreateNewDBWindow.ReturnData != '0':
+            self.data[self.CreateNewDBWindow.ReturnData] = {'sample':{'BMG':[], 'main':[]}, 'data':{'sample':{'probability':'1','SMG':'0', 'BMG':'0'}}}
+            self.Reload()
+            self.SaveChange()
+        elif self.CreateNewDBWindow.ReturnData == '0':
+            pass
+        else:
+            self.tk.after(10,self._newDB)
 
     def setLanguage(self,language):
         n = msg.askokcancel(self.lang.chooselang, self.lang.chooselangmsg)
@@ -421,20 +411,45 @@ class Settings_UI(_UI):
             sys.exit()
 
     def CreateNew(self):
+        tmp = {}
+        tmp1 = {}
         try:
             if not self.CreateNewItemWindow.isopen:
                 self.CreateNewItemWindow = CreateNewWindow(self.tk, self.lang.newitem)
                 self.CreateNewItemWindow.PrepareUILoading()
-                self.createnew_thread = threading.Thread(target=lambda:self._CreateNew(), daemon=True)
-                self.createnew_thread.start()
+                self.tk.after(10,self._CreateNew,tmp,tmp1)
         except AttributeError:
             self.CreateNewItemWindow = CreateNewWindow(self.tk, self.lang.newitem)
             self.CreateNewItemWindow.PrepareUILoading()
-            self.createnew_thread = threading.Thread(target=lambda:self._CreateNew(), daemon=True)
-            self.createnew_thread.start()
+            self.tk.after(10,self._CreateNew,tmp,tmp1)
         except:
             pass
-        
+
+    def _CreateNew(self,tmp,tmp1):
+        if self.CreateNewItemWindow.ReturnData != '' and self.CreateNewItemWindow.ReturnData != '0':
+            for i in self.data[self.CurrentData]:
+                if i == 'data':
+                    continue
+                tmp1[i] = self.data[self.CurrentData][i]
+            tmp1[self.CreateNewItemWindow.ReturnData] = {'BMG':[], 'main':[] }
+            for i in self.data[self.CurrentData]['data']:
+                tmp[i] = self.data[self.CurrentData]['data'][i]
+            tmp[self.CreateNewItemWindow.ReturnData] = {'probability': '1', 'SMG': '0', 'BMG': '0'}
+            tmp1['data'] = tmp
+            tmp = {}
+            for i in self.data:
+                if i == self.CurrentData:
+                    tmp[i] = tmp1
+                else:
+                    tmp[i] = self.data[i]
+            self.data = tmp
+            self.database = tmp1
+            self.Reload()
+            self.SaveChange()
+        elif self.CreateNewItemWindow.ReturnData == '0':
+            pass
+        else:
+            self.tk.after(10,self._CreateNew,tmp,tmp1)
 
     def Del(self, data):
         if self.isdel == 1:
@@ -472,81 +487,49 @@ class Settings_UI(_UI):
     def Rename(self, data):
         try:
             if not self.RenameWindow.isopen:
+                tmp = {}
+                tmp1 = {}
                 self.RenameWindow = CreateNewWindow(self.tk, self.lang.rename,data)
                 self.RenameWindow.PrepareUILoading()
-                self.rename_thread = threading.Thread(target=lambda:self._Rename(data), daemon=True)
-                self.rename_thread.start()
+                self.tk.after(10,self._Rename,data,tmp,tmp1)
         except AttributeError:
+            tmp = {}
+            tmp1 = {}
             self.RenameWindow = CreateNewWindow(self.tk, self.lang.rename,data)
             self.RenameWindow.PrepareUILoading()
-            self.rename_thread = threading.Thread(target=lambda:self._Rename(data), daemon=True)
-            self.rename_thread.start()
+            self.tk.after(10,self._Rename,data,tmp,tmp1)
         except:
-            pass
+            pass  
         
-        
-        
-    def _Rename(self, data):
-        tmp = {}
-        tmp1 = {}
-        while True:
-            sleep(0.1)
-            if self.RenameWindow.ReturnData != '' and self.RenameWindow.ReturnData != '0':
-                for i in self.data[self.CurrentData]:
-                    if i == data:
-                        tmp1[self.RenameWindow.ReturnData] = self.data[self.CurrentData][i]
-                    elif i == 'data':
-                        continue
-                    else:
-                        tmp1[i] = self.data[self.CurrentData][i]
-                for i in self.data[self.CurrentData]['data']:
-                    if i == data:
-                        tmp[self.RenameWindow.ReturnData] = self.data[self.CurrentData]['data'][i]
-                    else:
-                        tmp[i] = self.data[self.CurrentData]['data'][i]
-                tmp1['data'] = tmp
-                tmp = {}
-                for i in self.data:
-                    if i == self.CurrentData:
-                        tmp[i] = tmp1
-                    else:
-                        tmp[i] = self.data[i]
-                self.data = tmp
-                self.database = tmp1
-                self.RenameWindow.ReturnData = ''
-                self.SaveChange()
-                break
-            if self.RenameWindow.ReturnData == '0':
-                break
-
-    def _CreateNew(self):
-        tmp = {}
-        tmp1 = {}
-        while True:
-            sleep(0.1)
-            if self.CreateNewItemWindow.ReturnData != '' and self.CreateNewItemWindow.ReturnData != '0':
-                for i in self.data[self.CurrentData]:
-                    if i == 'data':
-                        continue
+    def _Rename(self, data,tmp,tmp1):
+        if self.RenameWindow.ReturnData != '' and self.RenameWindow.ReturnData != '0':
+            for i in self.data[self.CurrentData]:
+                if i == data:
+                    tmp1[self.RenameWindow.ReturnData] = self.data[self.CurrentData][i]
+                elif i == 'data':
+                    continue
+                else:
                     tmp1[i] = self.data[self.CurrentData][i]
-                tmp1[self.CreateNewItemWindow.ReturnData] = {'BMG':[], 'main':[] }
-                for i in self.data[self.CurrentData]['data']:
+            for i in self.data[self.CurrentData]['data']:
+                if i == data:
+                    tmp[self.RenameWindow.ReturnData] = self.data[self.CurrentData]['data'][i]
+                else:
                     tmp[i] = self.data[self.CurrentData]['data'][i]
-                tmp[self.CreateNewItemWindow.ReturnData] = {'probability': '1', 'SMG': '0', 'BMG': '0'}
-                tmp1['data'] = tmp
-                tmp = {}
-                for i in self.data:
-                    if i == self.CurrentData:
-                        tmp[i] = tmp1
-                    else:
-                        tmp[i] = self.data[i]
-                self.data = tmp
-                self.database = tmp1
-                self.Reload()
-                self.SaveChange()
-                break
-            if self.CreateNewItemWindow.ReturnData == '0':
-                break
+            tmp1['data'] = tmp
+            tmp = {}
+            for i in self.data:
+                if i == self.CurrentData:
+                    tmp[i] = tmp1
+                else:
+                    tmp[i] = self.data[i]
+            self.data = tmp
+            self.database = tmp1
+            self.RenameWindow.ReturnData = ''
+            self.SaveChange()
+        elif self.RenameWindow.ReturnData == '0':
+            pass
+        else:
+            self.tk.after(10,self._Rename,data,tmp,tmp1)
     
     def About(self):
         if self.about_isopen == 1:
@@ -693,7 +676,7 @@ class Player(_UI):
             imgtk = ImageTk.PhotoImage(image=img)
             self.label.imgtk = imgtk  
             self.label.configure(image=imgtk)
-            self.label.after(10, self.update_frame)
+            self.label.after(9, self.update_frame)
         else:
             self.cap.release()
             self.finish = 1
