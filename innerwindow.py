@@ -98,7 +98,6 @@ class InnerWindow:
             self.windowmove(int(self.mainwindow.place_info()['width']),y)
         if self.move_states[-5:-1] == 'righ':
             if self.move_states[0:2] == 'up':
-                self.mainwindow.configure(cursor='pencil')
                 self.windowmove(x,int(self.mainwindow.place_info()['height']) - self.move_start[1] - y)
                 if int(self.mainwindow.place_info()['height'])>20:
                     self.windowplace(int(self.mainwindow.place_info()['x']),int(self.mainwindow.place_info()['y']) + self.move_start[1] + y)
@@ -155,3 +154,7 @@ class InnerWindow:
         self.titlebutton1.destroy()
         self.titlebutton2.destroy()
         self.titlebutton3.destroy()
+
+    def showtext(self,text:str):
+        self.innershadow.configure(text='\n'+text,foreground='white',anchor='nw')
+        self.innershadow.update()

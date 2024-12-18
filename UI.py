@@ -3,6 +3,7 @@ from tkinter import ttk, messagebox as msg
 from PIL import Image, ImageTk
 import json, winsound, random, cv2, webbrowser, sys, math, ctypes
 from reck import Ck, DataLoading
+from innerwindow import InnerWindow
 import language
 
 class _UI(DataLoading):
@@ -118,6 +119,8 @@ class _UI(DataLoading):
         self.TextLoading()
         self.InputLoading()
         self.ButtonLoading()
+        self.innerwindow = InnerWindow(self.tk,'Console')
+        self.innerwindow.showtext('Hello world!')
     
     def Mainloop(self):
         self.tk.mainloop()
