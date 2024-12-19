@@ -1,14 +1,27 @@
 import tkinter as tk
 from tkinter import ttk, messagebox as msg
+import time
 from PIL import Image, ImageTk
 import json, winsound, random, cv2, webbrowser, sys, math, ctypes
 from reck import Ck, DataLoading
 from innerwindow import InnerWindow
-import language
+import language,functools
+
+def TestFun(fun):
+    @functools.wraps(fun)
+    def fun2(self, *args, **kwargs):
+        self.innerwindow.showtext('['+ time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())+']' + ' -INFO- ' + 'Invoke function ' + fun.__name__ + '().')
+        try:
+            a = fun(self,*args, **kwargs)
+        except Exception as e:
+            self.innerwindow.showtext('['+ time.strftime("%H:%M:%S", time.localtime())+']' + ' -ERROR- ' + 'Error at function ' + fun.__name__ + '() :'+repr(e) + '.')
+        self.innerwindow.showtext('['+ time.strftime("%H:%M:%S", time.localtime())+']' + ' -INFO- Function ' + fun.__name__ + '() Return: '+ str(a) + '.')
+        self.innerwindow.showtext('['+ time.strftime("%H:%M:%S", time.localtime())+']' + ' -INFO- ' + 'Finish function ' + fun.__name__ + '().')
+    return fun2
 
 class _UI(DataLoading):
 
-    def __init__(self, TopLevel = False, dataload = False):
+    def __init__(self, TopLevel = False, dataload = False,Test = False):
         ctypes.windll.shcore.SetProcessDpiAwareness(1)
         self.isopen = True
         self.drag_start_x = None
@@ -43,16 +56,22 @@ class _UI(DataLoading):
         self.mover.bind('<ButtonRelease-1>', self.on_drag_release)
         self.items = {'Text': [], 'Entry': [], 'Checkbox': [], 'Button': []}
         self.Varitems = {'TextVar': [], 'EntryVar': [], 'CheckboxVar': [], 'ButtonVar': []}
+        if Test:
+            self.Test = True
+            self.innerwindow = InnerWindow(self.tk,'Console')
+            self.innerwindow.showtext('Running...')
+        else:
+            self.Test = False
     
     def on_drag_start(self, event):
         self.drag_start_x = event.x
         self.drag_start_y = event.y
- 
+
     def on_drag_motion(self, event):
         x = self.tk.winfo_x() - self.drag_start_x + event.x
         y = self.tk.winfo_y() - self.drag_start_y + event.y
         self.tk.geometry('+{0}+{1}'.format(x, y))
- 
+    
     def on_drag_release(self, event):
         self.drag_start_x = None
         self.drag_start_y = None
@@ -67,7 +86,7 @@ class _UI(DataLoading):
         xdistance = speed
         ydistance = speed
         self.tk.after(10,self._Move,speed,agnle,x,y,xdistance,ydistance)
-    
+
     def _Move(self, speed, agnle, x, y, xdistance, ydistance):
         try:
             if not self.drag_start_x:  
@@ -84,7 +103,7 @@ class _UI(DataLoading):
         except:
             pass
         self.tk.after(10,self._Move,speed,agnle,x,y,xdistance,ydistance)
-    
+
     def MenuLoading(self):
         pass
 
@@ -96,7 +115,7 @@ class _UI(DataLoading):
 
     def InputLoading(self):
         pass
-
+    
     def Destroy(self):
         for i in self.items['Text']:
             i.destroy()
@@ -113,15 +132,15 @@ class _UI(DataLoading):
         self.Destroy()
         self.PrepareUILoading()
         self.tk.update()
-
+    
     def PrepareUILoading(self):
         self.MenuLoading()
         self.TextLoading()
         self.InputLoading()
         self.ButtonLoading()
-        self.innerwindow = InnerWindow(self.tk,'Console')
-        self.innerwindow.showtext('Hello world!')
-    
+        if self.Test:
+            self.innerwindow.update()
+
     def Mainloop(self):
         self.tk.mainloop()
 
@@ -129,7 +148,7 @@ class _UI(DataLoading):
 class main_UI(_UI):
 
     def __init__(self, TopLevel = False):
-        super().__init__(TopLevel, dataload = 'default')
+        super().__init__(TopLevel, dataload = 'default',Test=True)
         self.ck = Ck()
         self.tk.title(self.lang.title)
 
@@ -153,7 +172,7 @@ class main_UI(_UI):
         except:
             pass
         self.tk.after(10,self._Settingwindowmonitor)
-
+    @TestFun
     def OneWish(self):
         tmp = self.ck.ck()
         l = list(self.ck.database['data'].keys())
@@ -163,7 +182,7 @@ class main_UI(_UI):
         self.Varitems['TextVar'][l.index(tmp[0][1])+1].set(tmp1)
         self.Varitems['TextVar'][-1].set(self.ck.TimesDB['all'])
 
-    
+    @TestFun
     def TenWish(self):
         tmp = self.ck.ck(cishu= 10)
         l = list(self.ck.database['data'].keys())
@@ -177,7 +196,7 @@ class main_UI(_UI):
             tmp1.append(self.Varitems['TextVar'][i+1].set(tmp1[i]))
         self.Varitems['TextVar'][-1].set(self.ck.TimesDB['all'])
 
-    
+    @TestFun
     def OpenSettings(self):
         try:
             if not self.SettingsPage.isopen:
@@ -188,11 +207,11 @@ class main_UI(_UI):
             self.SettingsPage.PrepareUILoading()
         except:
             pass
-    
+    @TestFun
     def ChooseDB(self, data):
         self.ck = Ck(set= data)
         self.Reload()
-    
+    @TestFun
     def EasterEgg(self):
         if not self.easteregg:
             msg.showinfo(self.lang.easteregg,self.lang.eastereggmsg)
@@ -285,12 +304,12 @@ class main_UI(_UI):
 class Settings_UI(_UI):
 
     def __init__(self, TopLevel = False):
-        super().__init__(TopLevel, dataload = 'default')
+        super().__init__(TopLevel, dataload = 'default',Test=True)
         self.tk.title(self.lang.settings)
         self.isdel = 0
         self.about_isopen = 0
         self.isdeldb = 0
-
+    @TestFun
     def SaveChange(self):
         tmp = list(range(len(self.Varitems['EntryVar'])))
         for i in range(0,len(self.Varitems['EntryVar']),3):
@@ -330,12 +349,12 @@ class Settings_UI(_UI):
         with open('.\\database.json', 'w+', encoding='utf-8') as file:
             file.write(json.dumps(self.data, ensure_ascii=False, indent=4))
         self.Reload()
-
+    @TestFun
     def setDB(self,database):
         self.CurrentData = database
         self.database = self.data.get(database)
         self.Reload()
-    
+    @TestFun
     def delDB(self):
         if self.isdeldb == 1:
             return 0
@@ -358,7 +377,7 @@ class Settings_UI(_UI):
             self.Reload()
             self.SaveChange()
         self.isdeldb = 0
-
+    @TestFun
     def ChangeItemData(self):
         try:
             if not self.ChangeItemDataWindow.isopen:
@@ -381,7 +400,7 @@ class Settings_UI(_UI):
             pass
         else:
             self.tk.after(10,self._ChangeItemData)
-
+    @TestFun
     def newDB(self):
         try:
             if not self.CreateNewDBWindow.isopen:
@@ -405,14 +424,14 @@ class Settings_UI(_UI):
             pass
         else:
             self.tk.after(10,self._newDB)
-
+    @TestFun
     def setLanguage(self,language):
         n = msg.askokcancel(self.lang.chooselang, self.lang.chooselangmsg)
         if n:
             with open('.\\language', 'w') as l:
                 l.write(language)
             sys.exit()
-
+    @TestFun
     def CreateNew(self):
         tmp = {}
         tmp1 = {}
@@ -453,7 +472,7 @@ class Settings_UI(_UI):
             pass
         else:
             self.tk.after(10,self._CreateNew,tmp,tmp1)
-
+    @TestFun
     def Del(self, data):
         if self.isdel == 1:
             return 0
@@ -486,7 +505,7 @@ class Settings_UI(_UI):
         elif n and len(self.data[self.CurrentData]['data']) <= 1:
             msg.showerror(self.lang.option,self.lang.optionmsg)
         self.isdel = 0
-
+    @TestFun
     def Rename(self, data):
         try:
             if not self.RenameWindow.isopen:
@@ -533,7 +552,7 @@ class Settings_UI(_UI):
             pass
         else:
             self.tk.after(10,self._Rename,data,tmp,tmp1)
-    
+    @TestFun
     def About(self):
         if self.about_isopen == 1:
             return 0

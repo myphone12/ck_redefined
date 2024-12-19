@@ -10,12 +10,15 @@ class InnerWindow:
         self.clicked = [0,0,0,0]
         self.move_states = ''
         self.move_start = [0,0]
+        self.innertext = tk.StringVar()
+        self.innertext.set('\n')
+        self.title = title
 
         self.shadow = tk.Frame(self.tk,background='black')
         self.shadow.place(x=0,y=0,width=401,height=101)
         self.mainwindow = ttk.Frame(self.tk,relief='solid',borderwidth=1)
         self.mainwindow.place(x=0,y=0,width=400,height=100)
-        self.innershadow = tk.Label(self.mainwindow,background='black')
+        self.innershadow = tk.Label(self.mainwindow,background='black',textvariable=self.innertext,foreground='white',anchor='sw',justify='left')
         self.innershadow.place(x=2,y=2,width=396,height=96)
         self.titlebar = tk.Label(self.mainwindow,text=title,background='gray',anchor='w',relief='groove')
         self.titlebar.place(x=2,y=2,width=396,height=18)
@@ -156,5 +159,11 @@ class InnerWindow:
         self.titlebutton3.destroy()
 
     def showtext(self,text:str):
-        self.innershadow.configure(text='\n'+text,foreground='white',anchor='nw')
-        self.innershadow.update()
+        self.innertext.set(self.innertext.get() + '\n' + text)
+    
+    def update(self):
+        text = self.innertext.get()
+        self.shadow.destroy()
+        self.mainwindow.destroy()
+        self.__init__(self.tk,self.title)
+        self.innertext.set(text)
