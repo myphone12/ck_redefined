@@ -10,7 +10,7 @@ import language,functools
 def TestFun(fun):
     @functools.wraps(fun)
     def fun2(self, *args, **kwargs):
-        self.innerwindow.showtext('['+ time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())+']' + ' -INFO- ' + 'Invoke function ' + fun.__name__ + '().')
+        self.innerwindow.showtext('['+ time.strftime("%H:%M:%S", time.localtime())+']' + ' -INFO- ' + 'Invoke function ' + fun.__name__ + '().')
         try:
             a = fun(self,*args, **kwargs)
         except Exception as e:

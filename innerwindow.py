@@ -147,7 +147,7 @@ class InnerWindow:
     def minimumwindow(self):
         self.windowplace(0,self.tk.winfo_height()-20)
         self.windowmove(92,20)
-        self.self.clicked = [0,0,0,0]
+        self.clicked = [0,0,0,0]
         self.titlebutton2.configure(text='□')
 
     def closewindow(self):
