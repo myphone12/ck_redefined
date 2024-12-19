@@ -13,6 +13,7 @@ class InnerWindow:
         self.innertext = tk.StringVar()
         self.innertext.set('\n')
         self.title = title
+        self.isopen = True
 
         self.shadow = tk.Frame(self.tk,background='black')
         self.shadow.place(x=0,y=0,width=401,height=101)
@@ -150,20 +151,32 @@ class InnerWindow:
         self.titlebutton2.configure(text='□')
 
     def closewindow(self):
-        self.mainwindow.destroy()
-        self.shadow.destroy()
-        self.innershadow.destroy()
-        self.titlebar.destroy()
-        self.titlebutton1.destroy()
-        self.titlebutton2.destroy()
-        self.titlebutton3.destroy()
+        # self.mainwindow.destroy()
+        # self.shadow.destroy()
+        # self.innershadow.destroy()
+        # self.titlebar.destroy()
+        # self.titlebutton1.destroy()
+        # self.titlebutton2.destroy()
+        # self.titlebutton3.destroy()
+        self.hide()
 
     def showtext(self,text:str):
         self.innertext.set(self.innertext.get() + '\n' + text)
     
-    def update(self):
-        text = self.innertext.get()
-        self.shadow.destroy()
-        self.mainwindow.destroy()
+    def hide(self):
+        self.isopen = False
+        try:
+            self.text = self.innertext.get()
+            self.pos = self.mainwindow.place_info()
+            self.shadow.destroy()
+            self.mainwindow.destroy()
+        except:
+            pass
+
+    def show(self):
+        self.isopen = True
+        self.hide()
         self.__init__(self.tk,self.title)
-        self.innertext.set(text)
+        self.windowplace(int(self.pos['x']),int(self.pos['y']))
+        self.windowmove(int(self.pos['width']),int(self.pos['height']))
+        self.innertext.set(self.text)

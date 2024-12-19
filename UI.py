@@ -24,6 +24,7 @@ class _UI(DataLoading):
     def __init__(self, TopLevel = False, dataload = False,Test = False):
         ctypes.windll.shcore.SetProcessDpiAwareness(1)
         self.isopen = True
+        self.istest = False
         self.drag_start_x = None
         self.drag_start_y = None
         self.dataloadflag = dataload
@@ -60,6 +61,8 @@ class _UI(DataLoading):
             self.Test = True
             self.innerwindow = InnerWindow(self.tk,'Console')
             self.innerwindow.showtext('Running...')
+            self.tk.bind('<KeyPress-F11>',self.ShowConsole)
+            self.innerwindow.hide()
         else:
             self.Test = False
     
@@ -103,6 +106,11 @@ class _UI(DataLoading):
         except:
             pass
         self.tk.after(10,self._Move,speed,agnle,x,y,xdistance,ydistance)
+    
+    def ShowConsole(self,event):
+        if self.Test and not self.innerwindow.isopen:
+            self.innerwindow.show()
+        
 
     def MenuLoading(self):
         pass
@@ -138,8 +146,8 @@ class _UI(DataLoading):
         self.TextLoading()
         self.InputLoading()
         self.ButtonLoading()
-        if self.Test:
-            self.innerwindow.update()
+        if self.Test and self.innerwindow.isopen:
+            self.innerwindow.show()
 
     def Mainloop(self):
         self.tk.mainloop()
