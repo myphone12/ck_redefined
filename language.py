@@ -45,6 +45,7 @@ class language:
         self.mgerror = '保底应为大于0的整数！'
         self.nodbdel = '禁止删除初始数据库！'
         self.inputname = '请输入名称！'
+        self.notsamenameerror = '名称不能与已有相同！'
 
     def en_US(self):
         self.title = 'Wish stimulator'
@@ -88,3 +89,4 @@ class language:
         self.mgerror = 'The minimum guarantee should be an integer greater than 0!'
         self.nodbdel = 'Prohibit deleting the initial database!'
         self.inputname = 'Please enter a name!'
+        self.notsamenameerror = 'The name cannot be the same as an existing one!'

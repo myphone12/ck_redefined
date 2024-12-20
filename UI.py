@@ -59,6 +59,7 @@ class _UI(DataLoading):
         self.drag_start_y = event.y
 
     def on_drag_motion(self, event):
+        print(end='')
         x = self.tk.winfo_x() - self.drag_start_x + event.x
         y = self.tk.winfo_y() - self.drag_start_y + event.y
         self.tk.geometry('+{0}+{1}'.format(x, y))
@@ -413,6 +414,9 @@ class Settings_UI(_UI):
     
     def _newDB(self):
         if self.CreateNewDBWindow.ReturnData != '' and self.CreateNewDBWindow.ReturnData != '0':
+            if self.CreateNewDBWindow.ReturnData in list(self.data.keys()):
+                msg.showerror(self.lang.error,self.lang.notsamenameerror)
+                return 0
             self.data[self.CreateNewDBWindow.ReturnData] = {'sample':{'BMG':[], 'main':[]}, 'data':{'sample':{'probability':'1','SMG':'0', 'BMG':'0'}}}
             self.Reload()
             self.SaveChange()
@@ -445,6 +449,9 @@ class Settings_UI(_UI):
 
     def _CreateNew(self,tmp,tmp1):
         if self.CreateNewItemWindow.ReturnData != '' and self.CreateNewItemWindow.ReturnData != '0':
+            if self.CreateNewDBWindow.ReturnData in list(self.data.keys()):
+                msg.showerror(self.lang.error,self.lang.notsamenameerror)
+                return 0
             for i in self.data[self.CurrentData]:
                 if i == 'data':
                     continue

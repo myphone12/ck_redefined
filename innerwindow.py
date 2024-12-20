@@ -58,6 +58,7 @@ class InnerWindow:
  
     def on_drag_motion(self,event):
         p = self.mainwindow.place_info()
+        print(end='')
         x = int(p['x']) - self.drag_start_x + event.x
         y = int(p['y']) - self.drag_start_y + event.y
         self.windowplace(x,y)
@@ -92,6 +93,7 @@ class InnerWindow:
             return num
 
     def on_move_motion(self,event):
+        print(end='')
         x = event.x
         y = event.y
         if self.move_states == 'up':
