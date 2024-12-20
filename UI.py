@@ -1,23 +1,11 @@
 import tkinter as tk
 from tkinter import ttk, messagebox as msg
-import time
 from PIL import Image, ImageTk
 import json, winsound, random, cv2, webbrowser, sys, math, ctypes
 from reck import Ck, DataLoading
 from innerwindow import InnerWindow
-import language,functools
-
-def TestFun(fun):
-    @functools.wraps(fun)
-    def fun2(self, *args, **kwargs):
-        self.innerwindow.showtext('['+ time.strftime("%H:%M:%S", time.localtime())+']' + ' -INFO- ' + 'Invoke function ' + fun.__name__ + '().')
-        try:
-            a = fun(self,*args, **kwargs)
-        except Exception as e:
-            self.innerwindow.showtext('['+ time.strftime("%H:%M:%S", time.localtime())+']' + ' -ERROR- ' + 'Error at function ' + fun.__name__ + '() :'+repr(e) + '.')
-        self.innerwindow.showtext('['+ time.strftime("%H:%M:%S", time.localtime())+']' + ' -INFO- Function ' + fun.__name__ + '() Return: '+ str(a) + '.')
-        self.innerwindow.showtext('['+ time.strftime("%H:%M:%S", time.localtime())+']' + ' -INFO- ' + 'Finish function ' + fun.__name__ + '().')
-    return fun2
+from test import TestFun
+import language
 
 class _UI(DataLoading):
 
