@@ -449,7 +449,7 @@ class Settings_UI(_UI):
 
     def _CreateNew(self,tmp,tmp1):
         if self.CreateNewItemWindow.ReturnData != '' and self.CreateNewItemWindow.ReturnData != '0':
-            if self.CreateNewDBWindow.ReturnData in list(self.data.keys()):
+            if self.CreateNewItemWindow.ReturnData in list(self.database.keys()):
                 msg.showerror(self.lang.error,self.lang.notsamenameerror)
                 return 0
             for i in self.data[self.CurrentData]:
