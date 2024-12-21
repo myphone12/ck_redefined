@@ -295,6 +295,11 @@ class main_UI(_UI):
         self.Varitems['TextVar'].append(tk.StringVar())
         self.items['Text'].append(tk.Label(self.tk, textvariable = self.Varitems['TextVar'][-1]))
         self.items['Text'][-1].grid(row=len(self.ck.database['data'])*2 + 2, column=0,columnspan=4, padx=5, pady=5)
+        try:
+            if self.text2:
+                self.text2.grid_configure(row=len(self.ck.database['data'])*2 + 2)
+        except:
+            pass
             
 
     
