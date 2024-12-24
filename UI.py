@@ -533,6 +533,9 @@ class Settings_UI(_UI):
         
     def _Rename(self, data,tmp,tmp1):
         if self.RenameWindow.ReturnData != '' and self.RenameWindow.ReturnData != '0':
+            if self.RenameWindow.ReturnData in list(self.database.keys()):
+                msg.showerror(self.lang.error,self.lang.notsamenameerror)
+                return 0
             for i in self.data[self.CurrentData]:
                 if i == data:
                     tmp1[self.RenameWindow.ReturnData] = self.data[self.CurrentData][i]
