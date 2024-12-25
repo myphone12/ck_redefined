@@ -49,7 +49,9 @@ class _UI(DataLoading):
             self.Test = True
             self.innerwindow = InnerWindow(self.tk,'Console')
             self.innerwindow.showtext('Running...')
-            self.tk.bind('<KeyPress-F11>',self.ShowConsole)
+            self.tk.bind('<KeyPress-F11>',lambda a:self.ShowConsole())
+            self.tk.bind('<KeyPress-C>',lambda a:self.innerwindow.clear())
+            self.tk.bind('<KeyPress-c>',lambda a:self.innerwindow.clear())
             self.innerwindow.hide()
         else:
             self.Test = False
@@ -96,7 +98,7 @@ class _UI(DataLoading):
             pass
         self.tk.after(10,self._Move,speed,agnle,x,y,xdistance,ydistance)
     
-    def ShowConsole(self,event):
+    def ShowConsole(self):
         if self.Test and not self.innerwindow.isopen:
             self.innerwindow.show()
         

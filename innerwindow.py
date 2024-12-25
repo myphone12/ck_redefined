@@ -165,6 +165,9 @@ class InnerWindow:
     def showtext(self,text:str):
         self.innertext.set(self.innertext.get() + '\n' + text)
     
+    def clear(self):
+        self.innertext.set('\n')
+    
     def hide(self):
         self.isopen = False
         try:
