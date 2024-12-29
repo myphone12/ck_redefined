@@ -463,7 +463,7 @@ class Settings_UI(_UI):
                 if i == 'data':
                     continue
                 tmp1[i] = self.data[self.CurrentData][i]
-            tmp1[self.CreateNewItemWindow.ReturnData] = {'BMG':[], 'main':[] }
+            tmp1[self.CreateNewItemWindow.ReturnData] = {'BMG':['sample'], 'main':['sample'] }
             for i in self.data[self.CurrentData]['data']:
                 tmp[i] = self.data[self.CurrentData]['data'][i]
             tmp[self.CreateNewItemWindow.ReturnData] = {'probability': '1', 'SMG': '0', 'BMG': '0'}
